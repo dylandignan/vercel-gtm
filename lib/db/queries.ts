@@ -1,5 +1,4 @@
 import { eq, desc, and, or, ilike } from "drizzle-orm"
-import { unstable_cache } from "next/cache"
 import { db, leads } from "@/lib/db/index"
 import type { Lead, NewLead, LeadUpdate, LeadFilters } from "@/lib/db/schema"
 
@@ -45,45 +44,42 @@ export class LeadQueries {
     }
   }
 
-  // Cache leads query for 5 minutes
-  static getAll = unstable_cache(
-    async (filters: LeadFilters = {}): Promise<Lead[]> => {
-      try {
-        let query = db.select().from(leads)
+static getAll = async (filters: LeadFilters = {}): Promise<Lead[]> => {
+  try {
+    let query = db.select().from(leads)
 
-        const conditions = []
+    const conditions = []
 
-        if (filters.temperature) {
-          conditions.push(eq(leads.leadTemperature, filters.temperature))
-        }
+    if (filters.temperature) {
+      conditions.push(eq(leads.leadTemperature, filters.temperature))
+    }
 
-        if (filters.status) {
-          conditions.push(eq(leads.status, filters.status))
-        }
+    if (filters.status) {
+      conditions.push(eq(leads.status, filters.status))
+    }
 
-        if (filters.search) {
-          const searchTerm = `%${filters.search}%`
-          conditions.push(
-            or(ilike(leads.company, searchTerm), ilike(leads.email, searchTerm), ilike(leads.useCase, searchTerm)),
-          )
-        }
+    if (filters.search) {
+      const searchTerm = `%${filters.search}%`
+      conditions.push(
+        or(
+          ilike(leads.company, searchTerm),
+          ilike(leads.email, searchTerm),
+          ilike(leads.useCase, searchTerm)
+        ),
+      )
+    }
 
-        if (conditions.length > 0) {
-          query = query.where(and(...conditions))
-        }
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions))
+    }
 
-        return await query.orderBy(desc(leads.createdAt))
-      } catch (error) {
-        console.error("Failed to get leads:", error)
-        return []
-      }
-    },
-    ["leads-all"],
-    {
-      revalidate: 300, // 5 minutes
-      tags: ["leads"],
-    },
-  )
+    return await query.orderBy(desc(leads.createdAt))
+  } catch (error) {
+    console.error("Failed to get leads:", error)
+    return []
+  }
+}
+
 
   static async getById(id: string): Promise<Lead | null> {
     try {
@@ -134,8 +130,7 @@ export class LeadQueries {
   }
 
   // Cache stats for 2 minutes
-  static getStats = unstable_cache(
-    async () => {
+  static getStats = async () => {
       try {
         const allLeads = await db.select().from(leads)
 
@@ -163,11 +158,5 @@ export class LeadQueries {
           avgScore: 0,
         }
       }
-    },
-    ["lead-stats"],
-    {
-      revalidate: 120, // 2 minutes
-      tags: ["leads", "stats"],
-    },
-  )
+    }
 }
