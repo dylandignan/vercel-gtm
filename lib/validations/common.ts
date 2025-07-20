@@ -2,7 +2,7 @@ import { z } from "zod"
 
 // Environment variable validation - used globally
 export const envSchema = z.object({
-  DATABASE_URL: z.string().url("Invalid database URL"),
+  POSTGRES_URL: z.string().url("Invalid database URL"),
   OPENAI_API_KEY: z.string().min(1, "OpenAI API key is required"),
   NEXT_PUBLIC_SITE_URL: z.string().url("Invalid site URL").optional(),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
