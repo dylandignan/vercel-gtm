@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import type { FormData } from "@/lib/schemas/forms"
 
 interface QuestionOption {
   value: string
@@ -8,7 +9,7 @@ interface QuestionOption {
 }
 
 interface Question {
-  key: string
+  key: keyof FormData
   question: string
   icon: React.ComponentType<{ className?: string }>
   options: QuestionOption[]
@@ -16,7 +17,7 @@ interface Question {
 
 interface QuestionFormProps {
   question: Question
-  onAnswer: (key: string, value: string) => void
+  onAnswer: (key: keyof FormData, value: string) => Promise<void>
   onSkipToDemo: () => void
   onSkipQuestion: () => void
 }

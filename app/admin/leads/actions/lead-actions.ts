@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 import { LeadQueries } from "@/lib/db/queries"
-import { updateLeadSchema } from "@/lib/db/schema"
 import type { LeadUpdate } from "@/lib/db/schema"
+import { updateLeadSchema } from "@/lib/db/schema"
+import type { LeadStatus } from "@/lib/schemas/leads"
 
 export async function updateLeadAction(leadId: string, data: LeadUpdate) {
   try {
@@ -44,7 +45,7 @@ export async function deleteLeadAction(leadId: string) {
   }
 }
 
-export async function updateLeadStatusAction(leadId: string, status: string) {
+export async function updateLeadStatusAction(leadId: string, status: LeadStatus) {
   return updateLeadAction(leadId, { status })
 }
 

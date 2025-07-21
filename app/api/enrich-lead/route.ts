@@ -1,12 +1,12 @@
 import { generateObject } from "ai"
 import { openai } from "@ai-sdk/openai"
-import { leadEnrichmentSchema, enrichLeadRequestSchema } from "@/lib/schemas/lead"
-import type { LeadEnrichment } from "@/lib/schemas/lead"
+import { leadEnrichmentSchema, type LeadEnrichment } from "@/lib/schemas/leads"
+import { formDataSchema } from "@/lib/schemas/forms"
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { email, company, jobTitle, useCase } = enrichLeadRequestSchema.parse(body)
+    const { email, company, jobTitle, useCase } = formDataSchema.parse(body)
 
     const domain = email.split("@")[1]
 

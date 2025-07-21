@@ -5,14 +5,23 @@ import { Eye } from "lucide-react"
 import { TemperatureBadge } from "@/components/ui/temperature-badge"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { formatDate } from "@/lib/utils/lead-utils"
+import { useRouter } from "next/navigation"
+import { useTransition } from "react"
 import type { Lead } from "@/lib/db/schema"
 
 interface LeadTableProps {
   leads: Lead[]
-  onViewLead: (lead: Lead) => void
 }
 
-export function LeadTable({ leads, onViewLead }: LeadTableProps) {
+export function LeadTable({ leads }: LeadTableProps) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
+  const handleViewLead = (leadId: string) => {
+    startTransition(() => {
+      router.push(`/admin/leads/${leadId}`)
+    })
+  }
   if (leads.length === 0) {
     return (
       <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -65,11 +74,17 @@ export function LeadTable({ leads, onViewLead }: LeadTableProps) {
                 <td className="px-6 py-4">
                   <StatusBadge status={lead.status} />
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{formatDate(lead.createdAt)}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{formatDate(lead.createdAt.toISOString())}</td>
                 <td className="px-6 py-4">
-                  <Button variant="outline" size="sm" onClick={() => onViewLead(lead)} className="border-gray-300">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleViewLead(lead.id)} 
+                    disabled={isPending}
+                    className="border-gray-300"
+                  >
                     <Eye className="mr-1 h-4 w-4" />
-                    View
+                    {isPending ? "Loading..." : "View"}
                   </Button>
                 </td>
               </tr>

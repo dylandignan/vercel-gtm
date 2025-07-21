@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     })
 
     console.log("Returning streaming response")
-    return result.toAIStreamResponse()
+    return result.toDataStreamResponse()
   } catch (error: any) {
     console.error("Sales assistant API error:", error)
 

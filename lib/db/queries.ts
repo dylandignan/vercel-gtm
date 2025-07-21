@@ -1,6 +1,7 @@
-import { eq, desc, and, or, ilike } from "drizzle-orm"
-import { db, leads } from "@/lib/db/index"
-import type { Lead, NewLead, LeadUpdate, LeadFilters } from "@/lib/db/schema"
+import { eq, desc, and, or, ilike, inArray, SQL, count } from "drizzle-orm"
+import { db } from "@/lib/db"
+import { leads, type Lead, type NewLead, type LeadUpdate } from "@/lib/db/schema"
+import type { LeadSearchParams } from "@/lib/schemas/leads"
 
 export class LeadQueries {
   static async create(data: NewLead): Promise<Lead> {
@@ -44,41 +45,45 @@ export class LeadQueries {
     }
   }
 
-static getAll = async (filters: LeadFilters = {}): Promise<Lead[]> => {
+static getAll = async (filters: Partial<LeadSearchParams> = {}): Promise<{ leads: Lead[], total: number }> => {
   try {
-    let query = db.select().from(leads)
-
-    const conditions = []
-
-    if (filters.temperature) {
-      conditions.push(eq(leads.leadTemperature, filters.temperature))
-    }
-
-    if (filters.status) {
-      conditions.push(eq(leads.status, filters.status))
-    }
-
-    if (filters.search) {
-      const searchTerm = `%${filters.search}%`
-      conditions.push(
-        or(
-          ilike(leads.company, searchTerm),
-          ilike(leads.email, searchTerm),
-          ilike(leads.useCase, searchTerm)
-        ),
+    const { page = 1, limit = 20, ...searchFilters } = filters
+    const offset = (page - 1) * limit
+    
+    // Build an array of SQL snippets, skipping undefined entries
+    const conditions: SQL[] = [
+      searchFilters.temperature && searchFilters.temperature.length > 0 && inArray(leads.leadTemperature, searchFilters.temperature),
+      searchFilters.status && searchFilters.status.length > 0 && inArray(leads.status, searchFilters.status),
+      searchFilters.search && or(
+        ilike(leads.company, `%${searchFilters.search}%`),
+        ilike(leads.email,   `%${searchFilters.search}%`),
+        ilike(leads.useCase, `%${searchFilters.search}%`)
       )
-    }
+    ].filter(Boolean) as SQL[];
 
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions))
-    }
+    const whereClause = conditions.length ? and(...conditions) : undefined;
+    
+    // Get total count for pagination
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(leads)
+      .where(whereClause)
+    
+    // Get paginated results
+    const result = await db
+      .select()
+      .from(leads)
+      .where(whereClause)
+      .orderBy(desc(leads.createdAt))
+      .limit(limit)
+      .offset(offset)
 
-    return await query.orderBy(desc(leads.createdAt))
+    return { leads: result, total };
   } catch (error) {
-    console.error("Failed to get leads:", error)
-    return []
+    console.error("Failed to get leads:", error);
+    return { leads: [], total: 0 };
   }
-}
+};
 
 
   static async getById(id: string): Promise<Lead | null> {
@@ -122,14 +127,13 @@ static getAll = async (filters: LeadFilters = {}): Promise<Lead[]> => {
   static async delete(id: string): Promise<boolean> {
     try {
       const result = await db.delete(leads).where(eq(leads.id, id))
-      return result.rowCount > 0
+      return result.length > 0
     } catch (error) {
       console.error("Failed to delete lead:", error)
       return false
     }
   }
 
-  // Cache stats for 2 minutes
   static getStats = async () => {
       try {
         const allLeads = await db.select().from(leads)

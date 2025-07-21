@@ -1,4 +1,4 @@
-import { SalesContactForm } from "@/components/sales-contact-form"
+import { SalesContactForm } from "@/app/contact/components/sales-contact-form"
 
 export default function Page() {
   return <SalesContactForm />

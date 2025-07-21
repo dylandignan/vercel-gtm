@@ -12,7 +12,8 @@ import { LoadingState } from "@/app/contact/components/forms/loading-state"
 import { QuestionForm } from "@/app/contact/components/forms/question-form"
 import { QualifiedForm } from "@/app/contact/components/forms/qualified-form"
 
-import type { LeadEnrichment, FormData } from "@/lib/schemas/lead"
+import { leadEnrichmentSchema, type LeadEnrichment } from "@/lib/schemas/leads"
+import { type FormData } from "@/lib/schemas/forms"
 
 const SMART_QUESTIONS = [
   {
@@ -78,33 +79,41 @@ export function SalesContactForm() {
     setStep("enriching")
 
     try {
-      // Enrich lead data
-      const enrichResponse = await fetch("/api/enrich-lead", {
+      const enrichmentData = await fetch("/api/enrich-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       })
+        .then(async (response): Promise<LeadEnrichment | null> => {
+          if (!response.ok) return null
+          const data = await response.json()
+          if (data.error) return null
+          
+          // Use Zod schema to parse and validate the response
+          const parseResult = leadEnrichmentSchema.safeParse(data)
+          return parseResult.success ? parseResult.data : null
+        })
+        .catch((error) => {
+          console.error("Enrichment failed:", error)
+          return null
+        })
 
-      let enrichmentData = null
-      if (enrichResponse.ok) {
-        enrichmentData = await enrichResponse.json()
-        if (!enrichmentData.error) {
-          setEnrichment(enrichmentData)
-        }
+      if (enrichmentData) {
+        setEnrichment(enrichmentData)
       }
 
-      // Initial lead scoring
+      // Always save the lead, with or without enrichment
       await updateLeadScore(formData, enrichmentData)
       setStep("smart-questions")
     } catch (error) {
-      console.error("Enrichment failed:", error)
+      console.error("Form submission failed:", error)
       setStep("smart-questions")
     } finally {
       setIsEnriching(false)
     }
   }
 
-  const updateLeadScore = async (currentFormData: FormData, enrichmentData: any = null) => {
+  const updateLeadScore = async (currentFormData: FormData, enrichmentData: LeadEnrichment | null = null) => {
     try {
       await fetch("/api/score-lead", {
         method: "POST",

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, ExternalLink, Clock } from "lucide-react"
-import type { LeadEnrichment } from "@/lib/schemas/lead"
+import type { LeadEnrichment } from "@/lib/schemas/leads"
 
 interface QualifiedFormProps {
   enrichment?: LeadEnrichment | null

@@ -1,17 +1,37 @@
 import { generateObject } from "ai"
 import { openai } from "@ai-sdk/openai"
-import { leadScoringSchema, scoreLeadRequestSchema } from "@/lib/schemas/lead"
+import { leadScoringSchema, leadEnrichmentSchema, type LeadScoring } from "@/lib/schemas/leads"
+import { formDataSchema } from "@/lib/schemas/forms"
 import { LeadQueries } from "@/lib/db/queries"
-import type { LeadScore } from "@/lib/schemas/lead"
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { leadData, conversationHistory, enrichmentData } = scoreLeadRequestSchema.parse(body)
+    const leadData = formDataSchema.parse(body.leadData)
+    const enrichmentData = body.enrichmentData ? leadEnrichmentSchema.parse(body.enrichmentData) : undefined
 
-    const { object } = await generateObject({
-      model: openai("gpt-4o"),
-      schema: leadScoringSchema,
+    // Always save the lead first (this should never fail)
+    const savedLead = await LeadQueries.upsert({
+      email: leadData.email,
+      company: leadData.company,
+      firstName: leadData.firstName,
+      lastName: leadData.lastName,
+      jobTitle: leadData.jobTitle,
+      useCase: leadData.useCase,
+      timeline: leadData.timeline,
+      budgetRange: leadData.budgetRange,
+      enrichmentData,
+      // Default values for scoring fields
+      totalScore: 0,
+      leadTemperature: "cold",
+      priority: "medium",
+    })
+
+    // Try AI scoring (this can fail safely)
+    try {
+      const { object } = await generateObject({
+        model: openai("gpt-4o"),
+        schema: leadScoringSchema,
       prompt: `
         Analyze this lead and provide a comprehensive scoring assessment based on the actual data provided:
         
@@ -103,29 +123,35 @@ export async function POST(request: Request) {
       `,
     })
 
-    // Save to database using Drizzle
-    const lead = await LeadQueries.upsert({
-      email: leadData.email,
-      company: leadData.company,
-      firstName: leadData.firstName,
-      lastName: leadData.lastName,
-      jobTitle: leadData.jobTitle,
-      useCase: leadData.useCase,
-      timeline: leadData.timeline,
-      budgetRange: leadData.budgetRange,
-      enrichmentData,
-      totalScore: object.totalScore,
-      scoreBreakdown: object.scoreBreakdown,
-      leadTemperature: object.leadTemperature,
-      priority: object.priority,
-      recommendedAction: object.recommendedAction,
-      reasoning: object.reasoning,
-      buyingSignals: object.buyingSignals,
-      riskFactors: object.riskFactors,
-      nextBestActions: object.nextBestActions,
-    })
+      // Update the saved lead with AI scoring
+      await LeadQueries.update(savedLead.id, {
+        totalScore: object.totalScore,
+        scoreBreakdown: object.scoreBreakdown,
+        leadTemperature: object.leadTemperature,
+        priority: object.priority,
+        recommendedAction: object.recommendedAction,
+        reasoning: object.reasoning,
+        buyingSignals: object.buyingSignals,
+        riskFactors: object.riskFactors,
+        nextBestActions: object.nextBestActions,
+      })
 
-    return Response.json(object satisfies LeadScore)
+      return Response.json(object satisfies LeadScoring)
+    } catch (aiError) {
+      console.error("AI scoring failed, but lead was saved:", aiError)
+      // Return a basic response since the lead is already saved
+      return Response.json({
+        totalScore: 0,
+        leadTemperature: "cold",
+        priority: "medium",
+        scoreBreakdown: { companySize: 0, jobTitle: 0, budget: 0, timeline: 0, useCase: 0, engagement: 0, buyingSignals: 0 },
+        recommendedAction: "nurture_sequence",
+        reasoning: "AI scoring unavailable",
+        buyingSignals: [],
+        riskFactors: [],
+        nextBestActions: ["Follow up when AI is available"],
+      } satisfies LeadScoring)
+    }
   } catch (error) {
     console.error("Lead scoring error:", error)
     return Response.json({ error: "Failed to score lead" }, { status: 500 })

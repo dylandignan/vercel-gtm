@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { LeadQueries } from "@/lib/db/queries"
 import { LeadsPageClient } from "./leads-page-client"
 import { LeadStats } from "./components/lead-stats"
+import { leadSearchParamsSchema } from "@/lib/schemas/leads"
 
 interface SearchParams {
   search?: string
@@ -13,11 +14,14 @@ interface LeadsPageProps {
   searchParams: SearchParams
 }
 
-// Server Component - renders on server with initial data
-export default async function LeadsPage({ searchParams }: LeadsPageProps) {
+export default async function LeadsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const awaitedSearchParams = await searchParams
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation - Server rendered */}
       <nav className="border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center justify-between">
@@ -34,20 +38,17 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
       </nav>
 
       <div className="mx-auto max-w-7xl px-6 py-8">
-        {/* Header - Server rendered */}
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-medium text-black">Lead Management</h1>
           <p className="text-gray-600">Track and manage sales leads</p>
         </div>
 
-        {/* Stats - Server rendered with Suspense */}
         <Suspense fallback={<StatsLoading />}>
           <StatsSection />
         </Suspense>
 
-        {/* Interactive content - Client component with server data */}
         <Suspense fallback={<LeadsLoading />}>
-          <LeadsSection searchParams={searchParams} />
+          <LeadsSection searchParams={awaitedSearchParams} />
         </Suspense>
       </div>
     </div>
@@ -65,17 +66,24 @@ async function StatsSection() {
   }
 }
 
-// Server Component for leads
 async function LeadsSection({ searchParams }: { searchParams: SearchParams }) {
   try {
-    const filters = {
-      search: searchParams.search,
-      temperature: searchParams.temperature !== "all" ? searchParams.temperature : undefined,
-      status: searchParams.status !== "all" ? searchParams.status : undefined,
+    const validatedParams = leadSearchParamsSchema.safeParse(searchParams)
+    if (!validatedParams.success) {
+      console.error("Invalid search params:", validatedParams.error)
+      return <LeadsError />
     }
 
-    const leads = await LeadQueries.getAll(filters)
-    return <LeadsPageClient initialLeads={leads} searchParams={searchParams} />
+    const filters = {
+      search: validatedParams.data.search,
+      temperature: validatedParams.data.temperature,
+      status: validatedParams.data.status,
+      page: validatedParams.data.page,
+      limit: validatedParams.data.limit,
+    }
+
+    const { leads, total } = await LeadQueries.getAll(filters)
+    return <LeadsPageClient initialLeads={leads} totalCount={total} searchParams={searchParams} />
   } catch (error) {
     console.error("Failed to load leads:", error)
     return <LeadsError />

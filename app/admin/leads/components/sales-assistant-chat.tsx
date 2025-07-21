@@ -18,12 +18,6 @@ export function SalesAssistantChat() {
   return (
     <div className="flex h-full flex-col">
       <Card className="flex flex-1 flex-col">
-        <CardHeader className="border-b">
-          <CardTitle className="flex items-center space-x-2">
-            <Bot className="h-5 w-5 text-gray-600" />
-            <span>AI Sales Assistant</span>
-          </CardTitle>
-        </CardHeader>
         <CardContent className="flex-1 overflow-hidden p-4">
           <div className="h-full overflow-y-auto pr-4">
             {messages.length === 0 && (

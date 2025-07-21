@@ -1,22 +1,20 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertTriangle, CheckCircle, Phone, Mail, Calendar, Save, Plus } from "lucide-react"
+import { ArrowLeft, AlertTriangle, CheckCircle, Plus, Save, X } from "lucide-react"
 import { TemperatureBadge } from "@/components/ui/temperature-badge"
-import { updateLeadStatusAction, addLeadNoteAction } from "../actions/lead-actions"
+import { updateLeadStatusAction, addLeadNoteAction } from "@/app/admin/leads/actions/lead-actions"
 import { toast } from "sonner"
 import type { Lead } from "@/lib/db/schema"
 import type { ScoreBreakdown, LeadStatus } from "@/lib/schemas/leads"
 import { SCORE_ITEMS } from "@/app/admin/leads/score-items"
 
-interface LeadDetailDialogProps {
-  lead: Lead | null
-  isOpen: boolean
-  onClose: () => void
+interface LeadDetailPageProps {
+  lead: Lead
 }
 
 const STATUS_OPTIONS = [
@@ -28,14 +26,12 @@ const STATUS_OPTIONS = [
   { value: "closed_lost", label: "Closed Lost" },
 ]
 
-export function LeadDetailDialog({ lead, isOpen, onClose }: LeadDetailDialogProps) {
-  console.log(JSON.stringify(lead, null, 2))
+export function LeadDetailPage({ lead }: LeadDetailPageProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [newNote, setNewNote] = useState("")
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [optimisticNotes, setOptimisticNotes] = useState(lead?.notes || "")
-
-  if (!lead) return null
 
   const scoreBreakdown = (lead.scoreBreakdown as ScoreBreakdown) || {}
 
@@ -44,6 +40,7 @@ export function LeadDetailDialog({ lead, isOpen, onClose }: LeadDetailDialogProp
       const result = await updateLeadStatusAction(lead.id, newStatus)
       if (result.success) {
         toast.success(`Lead status changed to ${newStatus}`)
+        router.refresh()
       } else {
         toast.error(result.error)
       }
@@ -58,13 +55,14 @@ export function LeadDetailDialog({ lead, isOpen, onClose }: LeadDetailDialogProp
     const formattedNote = `[${timestamp}] ${newNote.trim()}`
     const updatedNotes = optimisticNotes ? `${optimisticNotes}\n${formattedNote}` : formattedNote
     setOptimisticNotes(updatedNotes)
-
+    
     startTransition(async () => {
       const result = await addLeadNoteAction(lead.id, newNote.trim())
       if (result.success) {
         setNewNote("")
         setIsAddingNote(false)
         toast.success("Note has been added to the lead")
+        router.refresh()
       } else {
         toast.error(result.error)
         // Revert optimistic update on error
@@ -74,33 +72,58 @@ export function LeadDetailDialog({ lead, isOpen, onClose }: LeadDetailDialogProp
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <span>{lead.company}</span>
-            <TemperatureBadge temperature={lead.leadTemperature} />
-          </DialogTitle>
-          <DialogDescription>Lead details and scoring breakdown</DialogDescription>
-        </DialogHeader>
-
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">Status</label>
-          <Select value={lead.status} onValueChange={handleStatusChange} disabled={isPending}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {STATUS_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="min-h-screen bg-white">
+      <nav className="border-b border-gray-200">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/admin/leads")}
+              className="border-gray-300"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Leads
+            </Button>
+            <div className="flex items-center space-x-2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-black">
+                <path d="M12 2L2 19.7778H22L12 2Z" fill="currentColor" />
+              </svg>
+              <span className="text-xl font-medium text-black">Vercel</span>
+              <span className="text-gray-400">/</span>
+              <span className="text-gray-600">Lead Details</span>
+            </div>
+          </div>
         </div>
+      </nav>
 
+      <div className="mx-auto max-w-4xl px-6 py-8">
         <div className="space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <h1 className="text-3xl font-medium text-black">{lead.company}</h1>
+              <TemperatureBadge temperature={lead.leadTemperature} />
+            </div>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">Status</label>
+            <Select value={lead.status} onValueChange={handleStatusChange} disabled={isPending}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Contact Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -239,33 +262,8 @@ export function LeadDetailDialog({ lead, isOpen, onClose }: LeadDetailDialogProp
               </div>
             )}
           </div>
-
-          {/* Recommended Action */}
-          <div className="rounded-lg bg-gray-50 p-4">
-            <div className="mb-1 text-sm font-medium text-gray-700">Recommended Action</div>
-            <div className="mb-2 font-medium text-gray-900 capitalize">
-              {lead.recommendedAction?.replace("_", " ") || "Continue conversation"}
-            </div>
-            <div className="text-sm text-gray-600">{lead.reasoning}</div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex space-x-3 border-t border-gray-200 pt-4">
-            <Button className="flex-1 bg-black hover:bg-gray-800">
-              <Phone className="mr-2 h-4 w-4" />
-              Call Lead
-            </Button>
-            <Button variant="outline" className="flex-1 border-gray-300 bg-transparent">
-              <Mail className="mr-2 h-4 w-4" />
-              Send Email
-            </Button>
-            <Button variant="outline" className="flex-1 border-gray-300 bg-transparent">
-              <Calendar className="mr-2 h-4 w-4" />
-              Schedule Demo
-            </Button>
-          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   )
 }

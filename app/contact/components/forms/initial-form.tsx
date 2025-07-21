@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowRight, MessageSquare } from "lucide-react"
-import type { FormData } from "@/lib/schemas/lead"
+import type { FormData } from "@/lib/schemas/forms"
 
 interface InitialFormProps {
   formData: FormData
