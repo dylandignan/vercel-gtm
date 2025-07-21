@@ -31,7 +31,7 @@ export function InitialForm({ formData, onInputChange, onSubmit, isSubmitting = 
       <div className="space-y-4">
         <div className="space-y-2">
           <h2 className="text-2xl font-medium text-black">Get started</h2>
-          <p className="text-gray-600">Tell us about your project and we'll customize the perfect solution.</p>
+          <p className="text-gray-600">{"Tell us about your project and we'll customize the perfect solution."}</p>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -104,22 +104,22 @@ export function InitialForm({ formData, onInputChange, onSubmit, isSubmitting = 
               required
             />
             <div className={`text-xs ${useCaseFeedback.color} flex items-center space-x-1`}>
-              <MessageSquare className="w-3 h-3" />
+              <MessageSquare className="h-3 w-3" />
               <span>{useCaseFeedback.message}</span>
             </div>
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-black hover:bg-gray-800 text-white h-12 text-base font-medium"
+            className="h-12 w-full bg-black text-base font-medium text-white hover:bg-gray-800"
             disabled={!formData.useCase.trim() || isSubmitting}
           >
             Continue
-            <ArrowRight className="w-4 h-4 ml-2" />
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </form>
 
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-center text-xs text-gray-500">
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </div>
       </div>

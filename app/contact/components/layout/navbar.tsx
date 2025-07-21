@@ -12,7 +12,7 @@ export function Navbar() {
             <span className="text-xl font-medium text-black">Vercel</span>
           </Link>
           <div className="flex items-center space-x-6 text-sm">
-            <span className="text-gray-600">Trusted by the world's leading companies</span>
+            <span className="text-gray-600">{"Trusted by the world's leading companies"}</span>
           </div>
         </div>
       </div>
