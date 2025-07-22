@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${GeistSans.className} ${GeistMono.className}q`}>
+      <body className={`${GeistSans.className} ${GeistMono.className}`}>
         <ErrorBoundary>
           {children}
           <Toaster />
