@@ -168,7 +168,13 @@ export function SalesContactForm() {
   }
 
   const handleSkipToDemo = () => {
-    setStep("qualified")
+    if (step === "self-service") {
+      // If coming from self-service, continue with smart questions
+      setStep("smart-questions")
+    } else {
+      // Otherwise go directly to qualified (original behavior)
+      setStep("qualified")
+    }
   }
 
   const handleSkipQuestion = () => {
