@@ -6,25 +6,18 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, AlertTriangle, CheckCircle, Plus, Save, X } from "lucide-react"
-import { TemperatureBadge } from "@/components/ui/temperature-badge"
+import { TemperatureBadge } from "@/app/admin/leads/components/temperature-badge"
 import { updateLeadStatusAction, addLeadNoteAction } from "@/app/admin/leads/actions/lead-actions"
 import { toast } from "sonner"
 import type { Lead } from "@/lib/db/schema"
 import type { ScoreBreakdown, LeadStatus } from "@/lib/schemas/leads"
 import { SCORE_ITEMS } from "@/app/admin/leads/score-items"
+import { STATUS_OPTIONS } from "@/app/admin/leads/display-options"
 
 interface LeadDetailPageProps {
   lead: Lead
 }
 
-const STATUS_OPTIONS = [
-  { value: "new", label: "New" },
-  { value: "contacted", label: "Contacted" },
-  { value: "qualified", label: "Qualified" },
-  { value: "demo_scheduled", label: "Demo Scheduled" },
-  { value: "closed_won", label: "Closed Won" },
-  { value: "closed_lost", label: "Closed Lost" },
-]
 
 export function LeadDetailPage({ lead }: LeadDetailPageProps) {
   const router = useRouter()

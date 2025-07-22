@@ -6,12 +6,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertTriangle, CheckCircle, Phone, Mail, Calendar, Save, Plus } from "lucide-react"
-import { TemperatureBadge } from "@/components/ui/temperature-badge"
+import { TemperatureBadge } from "@/app/admin/leads/components/temperature-badge"
 import { updateLeadStatusAction, addLeadNoteAction } from "../actions/lead-actions"
 import { toast } from "sonner"
 import type { Lead } from "@/lib/db/schema"
 import type { ScoreBreakdown, LeadStatus } from "@/lib/schemas/leads"
 import { SCORE_ITEMS } from "@/app/admin/leads/score-items"
+import { STATUS_OPTIONS } from "@/app/admin/leads/display-options"
 
 interface LeadDetailDialogProps {
   lead: Lead | null
@@ -19,14 +20,6 @@ interface LeadDetailDialogProps {
   onClose: () => void
 }
 
-const STATUS_OPTIONS = [
-  { value: "new", label: "New" },
-  { value: "contacted", label: "Contacted" },
-  { value: "qualified", label: "Qualified" },
-  { value: "demo_scheduled", label: "Demo Scheduled" },
-  { value: "closed_won", label: "Closed Won" },
-  { value: "closed_lost", label: "Closed Lost" },
-]
 
 export function LeadDetailDialog({ lead, isOpen, onClose }: LeadDetailDialogProps) {
   console.log(JSON.stringify(lead, null, 2))

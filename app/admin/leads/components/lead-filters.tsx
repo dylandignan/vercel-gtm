@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Search, ChevronDown, X } from "lucide-react"
-import { useCallback, useTransition } from "react"
+import { useCallback, useMemo, useTransition } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { useDebouncedCallback } from "use-debounce"
 
@@ -42,7 +42,7 @@ export function LeadFilters({
     router.replace(url, { scroll: false })
   }, 300)
 
-  const filterConfigs = [
+  const filterConfigs = useMemo(() => [
     { 
       key: "temperature", 
       label: "Temperature",
@@ -62,7 +62,7 @@ export function LeadFilters({
         { value: "demo_scheduled", label: "Demo Scheduled" }
       ]
     }
-  ]
+  ], [])
 
   const updateFilters = useCallback(
     (key: string, values: string[]) => {

@@ -2,12 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import { Eye } from "lucide-react"
-import { TemperatureBadge } from "@/components/ui/temperature-badge"
-import { StatusBadge } from "@/components/ui/status-badge"
-import { formatDate } from "@/lib/utils/lead-utils"
+import { TemperatureBadge } from "@/app/admin/leads/components/temperature-badge"
+import { StatusBadge } from "@/app/admin/leads/components/status-badge"
+import { formatDate } from "@/app/admin/leads/display-options"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import type { Lead } from "@/lib/db/schema"
+import { getJobTitleLabel } from "@/app/admin/leads/display-options"
 
 interface LeadTableProps {
   leads: Lead[]
@@ -59,7 +60,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                 <td className="px-6 py-4">
                   <div>
                     <div className="font-medium text-gray-900">{lead.email}</div>
-                    <div className="text-sm text-gray-600">{lead.jobTitle || "No title"}</div>
+                    <div className="text-sm text-gray-600">{lead.jobTitle ? getJobTitleLabel(lead.jobTitle) : "No title"}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4">

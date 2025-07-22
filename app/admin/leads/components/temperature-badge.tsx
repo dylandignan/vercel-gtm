@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge"
-import { getTemperatureConfig } from "@/lib/utils/lead-utils"
+import { getTemperatureConfig } from "@/app/admin/leads/display-options"
 
 interface TemperatureBadgeProps {
   temperature?: string | null

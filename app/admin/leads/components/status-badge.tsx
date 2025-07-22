@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge"
-import { getStatusColor } from "@/lib/utils/lead-utils"
+import { getStatusLabel, getStatusColor } from "@/app/admin/leads/display-options"
 
 interface StatusBadgeProps {
   status: string
@@ -7,5 +7,5 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
-  return <Badge className={`${getStatusColor(status)} ${className}`}>{status.replace("_", " ")}</Badge>
+  return <Badge className={`${getStatusColor(status)} ${className}`}>{getStatusLabel(status)}</Badge>
 }
