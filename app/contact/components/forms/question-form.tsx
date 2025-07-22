@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
 import { Loader2 } from "lucide-react"
 import type { FormData } from "@/lib/schemas/forms"
 
@@ -31,6 +32,13 @@ export function QuestionForm({
   onSkipQuestion,
   isProcessing = false,
 }: QuestionFormProps) {
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
+  
+  const handleOptionClick = async (value: string) => {
+    setSelectedOption(value)
+    await onAnswer(question.key, value)
+    setSelectedOption(null)
+  }
   return (
     <div className="p-8">
       <div className="space-y-6">
@@ -47,12 +55,12 @@ export function QuestionForm({
             <button
               key={option.value}
               className="w-full cursor-pointer rounded-lg border border-gray-200 p-4 text-left transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-200 disabled:hover:bg-white"
-              onClick={() => onAnswer(question.key, option.value)}
-              disabled={isProcessing}
+              onClick={() => handleOptionClick(option.value)}
+              disabled={selectedOption !== null}
             >
               <div className="flex items-center justify-between font-medium text-gray-900">
                 {option.label}
-                {isProcessing && <Loader2 className="h-4 w-4 animate-spin text-gray-400" />}
+                {selectedOption === option.value && <Loader2 className="h-4 w-4 animate-spin text-gray-400" />}
               </div>
             </button>
           ))}
@@ -62,14 +70,14 @@ export function QuestionForm({
           <button
             className="w-full cursor-pointer text-center text-sm text-gray-600 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={onSkipToDemo}
-            disabled={isProcessing}
+            disabled={selectedOption !== null}
           >
             Skip questions and book demo
           </button>
           <button
             className="w-full cursor-pointer text-center text-xs text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={onSkipQuestion}
-            disabled={isProcessing}
+            disabled={selectedOption !== null}
           >
             Skip this question
           </button>

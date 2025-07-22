@@ -57,7 +57,7 @@ const SMART_QUESTIONS = [
 ]
 
 export function SalesContactForm() {
-  const [step, setStep] = useState<"initial" | "enriching" | "smart-questions" | "self-service" | "qualified">(
+  const [step, setStep] = useState<"initial" | "enriching" | "smart-questions" | "processing" | "self-service" | "qualified">(
     "initial"
   )
   const [formData, setFormData] = useState<FormData>({
@@ -144,23 +144,23 @@ export function SalesContactForm() {
   }
 
   const handleQuestionAnswer = async (key: keyof FormData, value: string) => {
-    startTransition(async () => {
-      const updatedFormData = { ...formData, [key]: value }
-      setFormData(updatedFormData)
+    const updatedFormData = { ...formData, [key]: value }
+    setFormData(updatedFormData)
 
-      const scoringResult = await updateLeadScore(updatedFormData)
-
-      if (scoringResult?.recommendedAction === "self_service") {
-        setStep("self-service")
-        return
-      }
-
-      if (currentQuestionIndex < SMART_QUESTIONS.length - 1) {
-        setCurrentQuestionIndex((prev) => prev + 1)
-      } else {
-        setStep("qualified")
-      }
-    })
+    if (currentQuestionIndex < SMART_QUESTIONS.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1)
+    } else {
+      setStep("processing")
+      startTransition(async () => {
+        const scoringResult = await updateLeadScore(updatedFormData)
+        
+        if (scoringResult?.recommendedAction === "self_service") {
+          setStep("self-service")
+        } else {
+          setStep("qualified")
+        }
+      })
+    }
   }
 
   const handleSkipToDemo = () => {
@@ -209,6 +209,22 @@ export function SalesContactForm() {
               )}
 
               {step === "enriching" && <LoadingState companyName={formData.company} />}
+
+              {step === "processing" && (
+                <div className="p-8">
+                  <div className="space-y-6 text-center">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+                    </div>
+                    <div className="space-y-2">
+                      <h2 className="text-xl font-medium text-black">Analyzing your responses...</h2>
+                      <p className="text-sm text-gray-600">
+                        We're matching you with the perfect solution based on your needs.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {step === "smart-questions" && currentQuestion && (
                 <QuestionForm
