@@ -12,3 +12,5 @@ export const formDataSchema = z.object({
 })
 
 export type FormData = z.infer<typeof formDataSchema>
+
+export type FormStep = "initial" | "enriching" | "smart-questions" | "processing" | "self-service" | "qualified"

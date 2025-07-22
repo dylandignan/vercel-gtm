@@ -14,7 +14,7 @@ import { QualifiedForm } from "@/app/contact/components/forms/qualified-form"
 import { SelfServiceForm } from "@/app/contact/components/forms/self-service-form"
 
 import { leadEnrichmentSchema, type LeadEnrichment } from "@/lib/schemas/leads"
-import { type FormData } from "@/lib/schemas/forms"
+import { type FormData, type FormStep } from "@/lib/schemas/forms"
 
 const SMART_QUESTIONS = [
   {
@@ -57,9 +57,7 @@ const SMART_QUESTIONS = [
 ]
 
 export function SalesContactForm() {
-  const [step, setStep] = useState<"initial" | "enriching" | "smart-questions" | "processing" | "self-service" | "qualified">(
-    "initial"
-  )
+  const [step, setStep] = useState<FormStep>("initial")
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -153,7 +151,7 @@ export function SalesContactForm() {
       setStep("processing")
       startTransition(async () => {
         const scoringResult = await updateLeadScore(updatedFormData)
-        
+
         if (scoringResult?.recommendedAction === "self_service") {
           setStep("self-service")
         } else {
@@ -219,7 +217,7 @@ export function SalesContactForm() {
                     <div className="space-y-2">
                       <h2 className="text-xl font-medium text-black">Analyzing your responses...</h2>
                       <p className="text-sm text-gray-600">
-                        We're matching you with the perfect solution based on your needs.
+                        {"We're matching you with the perfect solution based on your needs."}
                       </p>
                     </div>
                   </div>

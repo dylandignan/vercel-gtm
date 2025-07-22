@@ -1,5 +1,7 @@
+import { type FormStep } from "@/lib/schemas/forms"
+
 interface HeroSectionProps {
-  step: "initial" | "enriching" | "smart-questions" | "self-service" | "qualified"
+  step: FormStep
   currentQuestionIndex?: number
   totalQuestions?: number
 }
@@ -13,6 +15,8 @@ export function HeroSection({ step, currentQuestionIndex = 0, totalQuestions = 3
         return "Join thousands of teams building the future with Vercel's platform."
       case "smart-questions":
         return "Just a few questions to personalize your experience."
+      case "processing":
+        return "Analyzing your needs to recommend the perfect solution."
       case "self-service":
         return "Perfect! You can get started immediately with our self-service option."
       case "qualified":
