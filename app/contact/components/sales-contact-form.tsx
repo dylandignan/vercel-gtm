@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { Clock, DollarSign, User } from "lucide-react"
 
 import { Navbar } from "@/app/contact/components/layout/navbar"
@@ -70,6 +70,7 @@ export function SalesContactForm() {
   const [enrichment, setEnrichment] = useState<LeadEnrichment | null>(null)
   const [isEnriching, setIsEnriching] = useState(false)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [isPending, startTransition] = useTransition()
 
   const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -130,18 +131,20 @@ export function SalesContactForm() {
   }
 
   const handleQuestionAnswer = async (key: keyof FormData, value: string) => {
-    const updatedFormData = { ...formData, [key]: value }
-    setFormData(updatedFormData)
+    startTransition(async () => {
+      const updatedFormData = { ...formData, [key]: value }
+      setFormData(updatedFormData)
 
-    // Update lead score with new data
-    await updateLeadScore(updatedFormData)
+      // Update lead score with new data
+      await updateLeadScore(updatedFormData)
 
-    // Move to next question or finish
-    if (currentQuestionIndex < SMART_QUESTIONS.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1)
-    } else {
-      setStep("qualified")
-    }
+      // Move to next question or finish
+      if (currentQuestionIndex < SMART_QUESTIONS.length - 1) {
+        setCurrentQuestionIndex((prev) => prev + 1)
+      } else {
+        setStep("qualified")
+      }
+    })
   }
 
   const handleSkipToDemo = () => {
@@ -198,6 +201,7 @@ export function SalesContactForm() {
                   onAnswer={handleQuestionAnswer}
                   onSkipToDemo={handleSkipToDemo}
                   onSkipQuestion={handleSkipQuestion}
+                  isProcessing={isPending}
                 />
               )}
 

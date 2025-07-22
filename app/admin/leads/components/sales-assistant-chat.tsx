@@ -4,22 +4,30 @@ import { useChat } from "ai/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Send, Bot, User } from "lucide-react"
+import { Send, Bot, User, Loader2 } from "lucide-react"
+import { useEffect, useRef } from "react"
 
 export function SalesAssistantChat() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: "/api/sales-assistant",
   })
 
-  console.log("Current messages in chat component:", messages)
-  console.log("Current input value:", input)
-  console.log("Is loading:", isLoading)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
 
   return (
     <div className="flex h-full flex-col">
       <Card className="flex flex-1 flex-col">
         <CardContent className="flex-1 overflow-hidden p-4">
-          <div className="h-full overflow-y-auto pr-4">
+          <div className="max-h-96 flex-1 overflow-y-auto pr-4">
             {messages.length === 0 && (
               <div className="flex h-full items-center justify-center text-gray-500">
                 Type a question to get started.
@@ -38,21 +46,32 @@ export function SalesAssistantChat() {
                     {m.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
                     <span className="font-medium capitalize">{m.role}</span>
                   </div>
-                  <p className="text-sm whitespace-pre-wrap">{m.content}</p>
+                  <div className="text-sm whitespace-pre-wrap">
+                    {m.content || (m.role === "assistant" && !m.content && (
+                      <div className="flex items-center space-x-2 text-gray-500">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Processing...</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
-            {isLoading && (
+            {isLoading && messages.length > 0 && messages[messages.length - 1]?.role === "user" && (
               <div className="mb-4 flex justify-start">
                 <div className="max-w-[70%] rounded-lg rounded-bl-none bg-gray-100 p-3 text-gray-900">
                   <div className="mb-1 flex items-center space-x-2">
                     <Bot className="h-4 w-4" />
                     <span className="font-medium capitalize">Assistant</span>
                   </div>
-                  <p className="text-sm">Thinking...</p>
+                  <div className="flex items-center space-x-2 text-gray-500">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Processing...</span>
+                  </div>
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
         </CardContent>
         <div className="border-t p-4">
