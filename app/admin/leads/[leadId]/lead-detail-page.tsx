@@ -43,7 +43,6 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
   const handleAddNote = () => {
     if (!newNote.trim()) return
 
-    // Optimistic update
     const timestamp = new Date().toISOString()
     const formattedNote = `[${timestamp}] ${newNote.trim()}`
     const updatedNotes = optimisticNotes ? `${optimisticNotes}\n${formattedNote}` : formattedNote
@@ -58,7 +57,6 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
         router.refresh()
       } else {
         toast.error(result.error)
-        // Revert optimistic update on error
         setOptimisticNotes(lead.notes || "")
       }
     })
@@ -92,7 +90,6 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
 
       <div className="mx-auto max-w-4xl px-6 py-8">
         <div className="space-y-6">
-          {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <h1 className="text-3xl font-medium text-black">{lead.company}</h1>
@@ -100,7 +97,6 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           </div>
 
-          {/* Status */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">Status</label>
             <Select value={lead.status} onValueChange={handleStatusChange} disabled={isPending}>
@@ -117,7 +113,6 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </Select>
           </div>
 
-          {/* Contact Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <div className="mb-1 text-sm font-medium text-gray-700">Full Name</div>
@@ -147,13 +142,11 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           </div>
 
-          {/* Use Case */}
           <div>
             <div className="mb-2 text-sm font-medium text-gray-700">Use Case</div>
             <div className="rounded-lg bg-gray-50 p-4 text-gray-900">{lead.useCase}</div>
           </div>
 
-          {/* Score Breakdown */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="text-sm font-medium text-gray-700">Lead Score Breakdown</div>
@@ -184,7 +177,7 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           </div>
 
-          {/* Buying Signals */}
+          
           {lead.buyingSignals && lead.buyingSignals.length > 0 && (
             <div>
               <div className="mb-2 text-sm font-medium text-gray-700">Buying Signals</div>
@@ -199,7 +192,7 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           )}
 
-          {/* Risk Factors */}
+          
           {lead.riskFactors && lead.riskFactors.length > 0 && (
             <div>
               <div className="mb-2 text-sm font-medium text-gray-700">Risk Factors</div>
@@ -214,7 +207,7 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           )}
 
-          {/* Next Best Actions */}
+          
           {lead.nextBestActions && lead.nextBestActions.length > 0 && (
             <div>
               <div className="mb-2 text-sm font-medium text-gray-700">Next Best Actions</div>
@@ -229,7 +222,7 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           )}
 
-          {/* Enrichment Data */}
+          
           {lead.enrichmentData && (
             <div>
               <div className="mb-2 text-sm font-medium text-gray-700">AI Enrichment Data</div>
@@ -260,7 +253,7 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           )}
 
-          {/* Recommended Action */}
+          
           {lead.recommendedAction && (
             <div className={`rounded-lg p-4 ${lead.recommendedAction === "self_service" ? "bg-blue-50 border border-blue-200" : "bg-gray-50"}`}>
               <div className="mb-1 text-sm font-medium text-gray-700">Recommended Action</div>
@@ -282,7 +275,7 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
             </div>
           )}
 
-          {/* Notes Section */}
+          
           <div>
             <div className="mb-2 flex items-center justify-between">
               <div className="text-sm font-medium text-gray-700">Notes</div>

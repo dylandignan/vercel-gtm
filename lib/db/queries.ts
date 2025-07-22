@@ -50,7 +50,7 @@ static getAll = async (filters: Partial<LeadSearchParams> = {}): Promise<{ leads
     const { page = 1, limit = 20, ...searchFilters } = filters
     const offset = (page - 1) * limit
     
-    // Build an array of SQL snippets, skipping undefined entries
+    
     const conditions: SQL[] = [
       searchFilters.temperature && searchFilters.temperature.length > 0 && inArray(leads.leadTemperature, searchFilters.temperature),
       searchFilters.status && searchFilters.status.length > 0 && inArray(leads.status, searchFilters.status),
@@ -63,13 +63,13 @@ static getAll = async (filters: Partial<LeadSearchParams> = {}): Promise<{ leads
 
     const whereClause = conditions.length ? and(...conditions) : undefined;
     
-    // Get total count for pagination
+    
     const [{ total }] = await db
       .select({ total: count() })
       .from(leads)
       .where(whereClause)
     
-    // Get paginated results
+    
     const result = await db
       .select()
       .from(leads)

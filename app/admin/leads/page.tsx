@@ -55,7 +55,7 @@ export default async function LeadsPage({
   )
 }
 
-// Server Component for stats
+
 async function StatsSection() {
   try {
     const stats = await LeadQueries.getStats()
@@ -90,7 +90,7 @@ async function LeadsSection({ searchParams }: { searchParams: SearchParams }) {
   }
 }
 
-// Loading components
+
 function StatsLoading() {
   return (
     <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
@@ -126,7 +126,7 @@ function LeadsLoading() {
   )
 }
 
-// Error components
+
 function StatsError() {
   return (
     <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">

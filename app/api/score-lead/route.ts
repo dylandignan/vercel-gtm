@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const leadData = formDataSchema.parse(body.leadData)
     const enrichmentData = body.enrichmentData ? leadEnrichmentSchema.parse(body.enrichmentData) : undefined
 
-    // Always save the lead first (this should never fail)
+    
     const savedLead = await LeadQueries.upsert({
       email: leadData.email,
       company: leadData.company,
@@ -21,13 +21,13 @@ export async function POST(request: Request) {
       timeline: leadData.timeline,
       budgetRange: leadData.budgetRange,
       enrichmentData,
-      // Default values for scoring fields
+      
       totalScore: 0,
       leadTemperature: "cold",
       priority: "medium",
     })
 
-    // Try AI scoring (this can fail safely)
+    
     try {
       const { object } = await generateObject({
         model: openai("gpt-4o"),
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
       `,
     })
 
-      // Update the saved lead with AI scoring
+      
       await LeadQueries.update(savedLead.id, {
         totalScore: object.totalScore,
         scoreBreakdown: object.scoreBreakdown,
@@ -149,7 +149,7 @@ export async function POST(request: Request) {
       return Response.json(object satisfies LeadScoring)
     } catch (aiError) {
       console.error("AI scoring failed, but lead was saved:", aiError)
-      // Return a basic response since the lead is already saved
+      
       return Response.json({
         totalScore: 0,
         leadTemperature: "cold",

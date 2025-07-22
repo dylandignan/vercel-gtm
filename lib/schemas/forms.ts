@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-// Form data schema - used in public contact form and admin
+
 export const formDataSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
@@ -12,5 +12,5 @@ export const formDataSchema = z.object({
   budgetRange: z.string().optional(),
 })
 
-// Form types
+
 export type FormData = z.infer<typeof formDataSchema>

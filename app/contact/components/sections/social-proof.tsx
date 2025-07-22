@@ -11,7 +11,7 @@ export function SocialProof() {
         </div>
       </div>
 
-      {/* Testimonial */}
+      
       <div className="border-l-2 border-gray-200 pl-6">
         <blockquote className="mb-4 text-lg leading-relaxed text-gray-700">
           {'"Vercel reduced our deployment time from 45 minutes to 30 seconds. Our team productivity increased 3x."'}

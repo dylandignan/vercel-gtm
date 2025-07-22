@@ -8,7 +8,6 @@ module.exports = [
   ...compat.extends("next/core-web-vitals", "prettier"),
   {
     rules: {
-      // Disable rules that conflict with Prettier
       "react/jsx-curly-spacing": "off",
       "react/jsx-equals-spacing": "off",
       "react/jsx-indent": "off",

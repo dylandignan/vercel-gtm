@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, ArrowRight, Sparkles } from "lucide-react"
 
@@ -9,11 +10,6 @@ interface SelfServiceFormProps {
 }
 
 export function SelfServiceForm({ companyName, onContinueToDemo }: SelfServiceFormProps) {
-  const handleSignupClick = () => {
-    // Open Vercel Pro signup in new tab
-    window.open("https://vercel.com/signup", "_blank")
-  }
-
   return (
     <div className="space-y-6 p-6">
       <div className="text-center">
@@ -51,24 +47,18 @@ export function SelfServiceForm({ companyName, onContinueToDemo }: SelfServiceFo
       </div>
 
       <div className="space-y-3">
-        <Button 
-          onClick={handleSignupClick}
-          className="w-full bg-black hover:bg-gray-800"
-          size="lg"
-        >
-          <ExternalLink className="mr-2 h-4 w-4" />
-          Get Started with Vercel Pro
-        </Button>
-        
+        <Link href="https://vercel.com/signup?plan=pro" target="_blank" rel="noopener noreferrer" className="w-full">
+          <Button className="w-full bg-black hover:bg-gray-800" size="lg">
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Get Started with Vercel Pro
+          </Button>
+        </Link>
+
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="mb-3 text-xs text-gray-500">
             Or if you need enterprise features like advanced security, priority support, and custom SLAs:
           </p>
-          <Button 
-            onClick={onContinueToDemo}
-            variant="outline"
-            className="w-full border-gray-300"
-          >
+          <Button onClick={onContinueToDemo} variant="outline" className="w-full border-gray-300">
             <ArrowRight className="mr-2 h-4 w-4" />
             Continue to Enterprise Demo
           </Button>
@@ -76,9 +66,7 @@ export function SelfServiceForm({ companyName, onContinueToDemo }: SelfServiceFo
       </div>
 
       <div className="text-center">
-        <p className="text-xs text-gray-400">
-          No commitment required • 14-day free trial • Cancel anytime
-        </p>
+        <p className="text-xs text-gray-400">No commitment required • 14-day free trial • Cancel anytime</p>
       </div>
     </div>
   )

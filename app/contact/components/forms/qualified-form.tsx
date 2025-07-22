@@ -9,7 +9,6 @@ interface QualifiedFormProps {
 }
 
 export function QualifiedForm({ enrichment }: QualifiedFormProps) {
-  // Determine if user should get Pro trial or Enterprise demo
   const shouldGetProTrial = enrichment?.recommendedPlan === "pro"
 
   return (

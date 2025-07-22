@@ -1,6 +1,6 @@
 import { Flame, Thermometer, Snowflake } from "lucide-react"
 
-// Display options for lead data - used for showing proper labels and colors in UI
+
 export const STATUS_OPTIONS = [
   { value: "new", label: "New" },
   { value: "contacted", label: "Contacted" },
@@ -10,7 +10,7 @@ export const STATUS_OPTIONS = [
   { value: "closed_lost", label: "Closed Lost" },
 ] as const
 
-// Status color configuration
+
 export const STATUS_COLOR_CONFIG = {
   new: "bg-blue-50 text-blue-700 border-blue-200",
   contacted: "bg-amber-50 text-amber-700 border-amber-200",
@@ -29,7 +29,7 @@ export const JOB_TITLE_OPTIONS = [
   { value: "other", label: "Other" },
 ] as const
 
-// Helper functions to get display labels and colors
+
 export const getStatusLabel = (status: string) => {
   return STATUS_OPTIONS.find(option => option.value === status)?.label || status
 }
@@ -67,7 +67,7 @@ export const getBudgetRangeLabel = (value: string) => {
   return BUDGET_RANGE_OPTIONS.find(option => option.value === value)?.label || value
 }
 
-// Temperature configuration with icons and colors
+
 export const TEMPERATURE_CONFIG = {
   hot: {
     icon: Flame,

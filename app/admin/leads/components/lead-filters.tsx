@@ -105,7 +105,7 @@ export function LeadFilters({
   const clearAllFilters = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString())
     
-    // Only remove filter-related params
+    
     const filterKeys = ["search", ...filterConfigs.map(config => config.key)]
     filterKeys.forEach(key => params.delete(key))
     

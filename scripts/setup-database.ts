@@ -10,7 +10,7 @@ async function setupDatabase() {
   console.log("🚀 Setting up database...")
 
   try {
-    // Check if POSTGRES_URL is set
+    
     if (!process.env.POSTGRES_URL) {
       console.error("❌ POSTGRES_URL environment variable is not set")
       console.log("Please set your DATABASE_URL in the environment variables")
@@ -19,17 +19,17 @@ async function setupDatabase() {
 
     console.log("✅ POSTGRES_URL is configured")
 
-    // Generate migration files
+    
     console.log("📝 Generating migration files...")
     await execAsync("pnpm db:generate")
     console.log("✅ Migration files generated")
 
-    // Push schema to database
+    
     console.log("🔄 Pushing schema to database...")
     await execAsync("pnpm db:push")
     console.log("✅ Schema pushed to database")
 
-    // Seed the database
+    
     console.log("🌱 Seeding database with sample data...")
     await execAsync("pnpm db:seed")
     console.log("✅ Database seeded successfully")

@@ -34,7 +34,7 @@ export function HeroSection({ step, currentQuestionIndex = 0, totalQuestions = 3
           <p className="text-xl text-gray-600 leading-relaxed max-w-lg">{getHeadline()}</p>
         </div>
 
-        {/* Progress for questions */}
+        
         {step === "smart-questions" && (
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">

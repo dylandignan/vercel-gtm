@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   try {
     const { messages } = await request.json()
 
-    // Generic database tools for flexibility
+    
     const tools = {
       listTables: tool({
         description: "List all tables in the database with their schema information",
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
           query: z.string().describe("SQL query to execute (SELECT statements only)")
         }),
         execute: async ({ query }) => {
-          // Basic safety check - only allow SELECT statements
+          
           const trimmedQuery = query.trim().toLowerCase()
           if (!trimmedQuery.startsWith('select')) {
             throw new Error("Only SELECT queries are allowed for safety. Use SELECT statements to query data.")
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
       model: openai("gpt-4o"),
       messages,
       tools,
-      maxSteps: 5, // Allow multiple tool calls and follow-up responses
+      maxSteps: 5, 
       system: `You are a Vercel sales assistant with direct access to our PostgreSQL database.
 
 Available Tools:
@@ -127,7 +127,7 @@ Remember: You can answer any question about the data by exploring tables and wri
   } catch (error: any) {
     console.error("Sales assistant API error:", error)
 
-    // Return a proper error response that won't break useChat
+    
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

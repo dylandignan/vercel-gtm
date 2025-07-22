@@ -91,7 +91,6 @@ export function SalesContactForm() {
           const data = await response.json()
           if (data.error) return null
           
-          // Use Zod schema to parse and validate the response
           const parseResult = leadEnrichmentSchema.safeParse(data)
           return parseResult.success ? parseResult.data : null
         })
@@ -104,10 +103,8 @@ export function SalesContactForm() {
         setEnrichment(enrichmentData)
       }
 
-      // Always save the lead, with or without enrichment
       const scoringResult = await updateLeadScore(formData, enrichmentData)
       
-      // Check if AI recommends self-service
       if (scoringResult?.recommendedAction === "self_service") {
         setStep("self-service")
       } else {
@@ -149,16 +146,13 @@ export function SalesContactForm() {
       const updatedFormData = { ...formData, [key]: value }
       setFormData(updatedFormData)
 
-      // Update lead score with new data
       const scoringResult = await updateLeadScore(updatedFormData)
 
-      // Check if updated scoring recommends self-service
       if (scoringResult?.recommendedAction === "self_service") {
         setStep("self-service")
         return
       }
 
-      // Move to next question or finish
       if (currentQuestionIndex < SMART_QUESTIONS.length - 1) {
         setCurrentQuestionIndex((prev) => prev + 1)
       } else {
@@ -169,10 +163,8 @@ export function SalesContactForm() {
 
   const handleSkipToDemo = () => {
     if (step === "self-service") {
-      // If coming from self-service, continue with smart questions
       setStep("smart-questions")
     } else {
-      // Otherwise go directly to qualified (original behavior)
       setStep("qualified")
     }
   }
@@ -193,7 +185,6 @@ export function SalesContactForm() {
 
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid items-start gap-16 py-16 lg:grid-cols-2">
-          {/* Left Column - Content */}
           <div className="space-y-12">
             <HeroSection
               step={step}
@@ -201,13 +192,9 @@ export function SalesContactForm() {
               totalQuestions={SMART_QUESTIONS.length}
             />
 
-            {/* Remove this entire section - AI insights are for internal use only */}
-            {/* {enrichment && <AIInsights enrichment={enrichment} companyName={formData.company} />} */}
-
             <SocialProof />
           </div>
 
-          {/* Right Column - Form */}
           <div className="lg:sticky lg:top-8">
             <div className="rounded-lg border border-gray-200 bg-white">
               {step === "initial" && (
