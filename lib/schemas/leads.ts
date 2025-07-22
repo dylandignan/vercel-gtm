@@ -17,8 +17,6 @@ export const leadEnrichmentSchema = z.object({
   likelyBudget: z.enum(["under-1k", "1k-5k", "5k-15k", "15k-50k", "50k+"]),
   urgencyScore: z.number().min(1).max(10),
   recommendedPlan: z.enum(["pro", "enterprise", "custom"]),
-  keyPainPoints: z.array(z.string()),
-  nextBestQuestion: z.string().optional(),
 })
 
 export const scoreBreakdownSchema = z.object({

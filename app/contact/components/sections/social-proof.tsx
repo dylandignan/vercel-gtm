@@ -5,9 +5,9 @@ export function SocialProof() {
         <p className="text-sm tracking-wide text-gray-500 uppercase">Trusted by</p>
         <div className="grid grid-cols-4 items-center gap-8 opacity-60">
           <div className="text-lg font-medium">Netflix</div>
-          <div className="text-lg font-medium">TikTok</div>
-          <div className="text-lg font-medium">Hulu</div>
-          <div className="text-lg font-medium">Twitch</div>
+          <div className="text-lg font-medium">Pinterest</div>
+          <div className="text-lg font-medium">Figma</div>
+          <div className="text-lg font-medium">Adobe</div>
         </div>
       </div>
 
@@ -18,7 +18,7 @@ export function SocialProof() {
         </blockquote>
         <div className="text-sm">
           <div className="font-medium text-gray-900">Sarah Chen</div>
-          <div className="text-gray-500">VP Engineering, TechCorp</div>
+          <div className="text-gray-500">VP Engineering, Box</div>
         </div>
       </div>
     </div>
