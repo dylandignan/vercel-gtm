@@ -116,10 +116,20 @@ export async function POST(request: Request) {
         - Warm (45-74): Interested, some qualification needed  
         - Cold (0-44): Early stage, needs nurturing
         
+        SELF-SERVICE QUALIFICATION:
+        If enrichment data shows recommendedPlan as "pro", consider if this lead should self-serve:
+        - Low-complexity use cases (marketing sites, simple applications)
+        - Small team/company size
+        - Lower budget ranges (under $5k/month)
+        - Industries that typically don't need enterprise features (lawn care, small local businesses, personal projects)
+        
+        For these cases, set recommendedAction to "self_service" instead of other actions.
+        
         IMPORTANT: 
         - Analyze the use case description carefully for engagement and buying signals
         - Look for specific pain points, requirements, and urgency indicators
         - Score engagement based on the depth and specificity of their response
+        - Consider if this lead would be better served by self-signup for Vercel Pro
       `,
     })
 

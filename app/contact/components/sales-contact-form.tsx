@@ -11,6 +11,7 @@ import { InitialForm } from "@/app/contact/components/forms/initial-form"
 import { LoadingState } from "@/app/contact/components/forms/loading-state"
 import { QuestionForm } from "@/app/contact/components/forms/question-form"
 import { QualifiedForm } from "@/app/contact/components/forms/qualified-form"
+import { SelfServiceForm } from "@/app/contact/components/forms/self-service-form"
 
 import { leadEnrichmentSchema, type LeadEnrichment } from "@/lib/schemas/leads"
 import { type FormData } from "@/lib/schemas/forms"
@@ -56,7 +57,7 @@ const SMART_QUESTIONS = [
 ]
 
 export function SalesContactForm() {
-  const [step, setStep] = useState<"initial" | "enriching" | "smart-questions" | "qualified">("initial")
+  const [step, setStep] = useState<"initial" | "enriching" | "smart-questions" | "self-service" | "qualified">("initial")
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -104,8 +105,14 @@ export function SalesContactForm() {
       }
 
       // Always save the lead, with or without enrichment
-      await updateLeadScore(formData, enrichmentData)
-      setStep("smart-questions")
+      const scoringResult = await updateLeadScore(formData, enrichmentData)
+      
+      // Check if AI recommends self-service
+      if (scoringResult?.recommendedAction === "self_service") {
+        setStep("self-service")
+      } else {
+        setStep("smart-questions")
+      }
     } catch (error) {
       console.error("Form submission failed:", error)
       setStep("smart-questions")
@@ -116,7 +123,7 @@ export function SalesContactForm() {
 
   const updateLeadScore = async (currentFormData: FormData, enrichmentData: LeadEnrichment | null = null) => {
     try {
-      await fetch("/api/score-lead", {
+      const response = await fetch("/api/score-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -125,8 +132,15 @@ export function SalesContactForm() {
           enrichmentData: enrichmentData || enrichment,
         }),
       })
+      
+      if (response.ok) {
+        const scoringResult = await response.json()
+        return scoringResult
+      }
+      return null
     } catch (error) {
       console.error("Scoring failed:", error)
+      return null
     }
   }
 
@@ -136,7 +150,13 @@ export function SalesContactForm() {
       setFormData(updatedFormData)
 
       // Update lead score with new data
-      await updateLeadScore(updatedFormData)
+      const scoringResult = await updateLeadScore(updatedFormData)
+
+      // Check if updated scoring recommends self-service
+      if (scoringResult?.recommendedAction === "self_service") {
+        setStep("self-service")
+        return
+      }
 
       // Move to next question or finish
       if (currentQuestionIndex < SMART_QUESTIONS.length - 1) {
@@ -202,6 +222,13 @@ export function SalesContactForm() {
                   onSkipToDemo={handleSkipToDemo}
                   onSkipQuestion={handleSkipQuestion}
                   isProcessing={isPending}
+                />
+              )}
+
+              {step === "self-service" && (
+                <SelfServiceForm
+                  companyName={formData.company}
+                  onContinueToDemo={handleSkipToDemo}
                 />
               )}
 

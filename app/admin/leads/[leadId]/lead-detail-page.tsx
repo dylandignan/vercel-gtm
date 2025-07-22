@@ -12,7 +12,7 @@ import { toast } from "sonner"
 import type { Lead } from "@/lib/db/schema"
 import type { ScoreBreakdown, LeadStatus } from "@/lib/schemas/leads"
 import { SCORE_ITEMS } from "@/app/admin/leads/score-items"
-import { STATUS_OPTIONS } from "@/app/admin/leads/display-options"
+import { STATUS_OPTIONS, getJobTitleLabel, getTimelineLabel, getBudgetRangeLabel } from "@/app/admin/leads/display-options"
 
 interface LeadDetailPageProps {
   lead: Lead
@@ -120,20 +120,30 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
           {/* Contact Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
+              <div className="mb-1 text-sm font-medium text-gray-700">Full Name</div>
+              <div className="text-gray-900">
+                {[lead.firstName, lead.lastName].filter(Boolean).join(" ") || "Not provided"}
+              </div>
+            </div>
+            <div>
               <div className="mb-1 text-sm font-medium text-gray-700">Email</div>
               <div className="text-gray-900">{lead.email}</div>
             </div>
             <div>
               <div className="mb-1 text-sm font-medium text-gray-700">Job Title</div>
-              <div className="text-gray-900">{lead.jobTitle || "Not provided"}</div>
+              <div className="text-gray-900">{lead.jobTitle ? getJobTitleLabel(lead.jobTitle) : "Not provided"}</div>
+            </div>
+            <div>
+              <div className="mb-1 text-sm font-medium text-gray-700">Company</div>
+              <div className="text-gray-900">{lead.company}</div>
             </div>
             <div>
               <div className="mb-1 text-sm font-medium text-gray-700">Timeline</div>
-              <div className="text-gray-900">{lead.timeline || "Not provided"}</div>
+              <div className="text-gray-900">{lead.timeline ? getTimelineLabel(lead.timeline) : "Not provided"}</div>
             </div>
             <div>
               <div className="mb-1 text-sm font-medium text-gray-700">Budget Range</div>
-              <div className="text-gray-900">{lead.budgetRange || "Not provided"}</div>
+              <div className="text-gray-900">{lead.budgetRange ? getBudgetRangeLabel(lead.budgetRange) : "Not provided"}</div>
             </div>
           </div>
 
@@ -201,6 +211,74 @@ export function LeadDetailPage({ lead }: LeadDetailPageProps) {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Next Best Actions */}
+          {lead.nextBestActions && lead.nextBestActions.length > 0 && (
+            <div>
+              <div className="mb-2 text-sm font-medium text-gray-700">Next Best Actions</div>
+              <div className="space-y-2">
+                {lead.nextBestActions.map((action, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <CheckCircle className="h-3 w-3 text-blue-600" />
+                    <span className="text-sm text-gray-700">{action}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Enrichment Data */}
+          {lead.enrichmentData && (
+            <div>
+              <div className="mb-2 text-sm font-medium text-gray-700">AI Enrichment Data</div>
+              <div className="rounded-lg bg-gray-50 p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="mb-1 text-xs font-medium text-gray-600">Company Size</div>
+                    <div className="text-sm text-gray-900">{lead.enrichmentData.companySize || "Not provided"}</div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-xs font-medium text-gray-600">Industry</div>
+                    <div className="text-sm text-gray-900">{lead.enrichmentData.industry || "Not provided"}</div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-xs font-medium text-gray-600">Likely Budget</div>
+                    <div className="text-sm text-gray-900">{lead.enrichmentData.likelyBudget || "Not provided"}</div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-xs font-medium text-gray-600">Urgency Score</div>
+                    <div className="text-sm text-gray-900">{lead.enrichmentData.urgencyScore ? `${lead.enrichmentData.urgencyScore}/10` : "Not provided"}</div>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-xs font-medium text-gray-600">Recommended Plan</div>
+                    <div className="text-sm text-gray-900 capitalize">{lead.enrichmentData.recommendedPlan || "Not provided"}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Recommended Action */}
+          {lead.recommendedAction && (
+            <div className={`rounded-lg p-4 ${lead.recommendedAction === "self_service" ? "bg-blue-50 border border-blue-200" : "bg-gray-50"}`}>
+              <div className="mb-1 text-sm font-medium text-gray-700">Recommended Action</div>
+              <div className={`mb-2 font-medium capitalize ${lead.recommendedAction === "self_service" ? "text-blue-900" : "text-gray-900"}`}>
+                {lead.recommendedAction === "self_service" 
+                  ? "✨ Self-Service (Vercel Pro)" 
+                  : lead.recommendedAction?.replace("_", " ") || "Continue conversation"}
+              </div>
+              <div className={`text-sm ${lead.recommendedAction === "self_service" ? "text-blue-700" : "text-gray-600"}`}>
+                {lead.reasoning}
+              </div>
+              {lead.recommendedAction === "self_service" && (
+                <div className="mt-3 p-3 bg-blue-100 rounded-md">
+                  <p className="text-sm text-blue-800">
+                    <strong>🎯 Suggestion:</strong> This lead is perfect for self-service signup. They can get started immediately with Vercel Pro without SDR intervention.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

@@ -1,5 +1,5 @@
 interface HeroSectionProps {
-  step: "initial" | "enriching" | "smart-questions" | "qualified"
+  step: "initial" | "enriching" | "smart-questions" | "self-service" | "qualified"
   currentQuestionIndex?: number
   totalQuestions?: number
 }
@@ -13,6 +13,8 @@ export function HeroSection({ step, currentQuestionIndex = 0, totalQuestions = 3
         return "Join thousands of teams building the future with Vercel's platform."
       case "smart-questions":
         return "Just a few questions to personalize your experience."
+      case "self-service":
+        return "Perfect! You can get started immediately with our self-service option."
       case "qualified":
         return "Ready to ship faster than ever before."
       default:

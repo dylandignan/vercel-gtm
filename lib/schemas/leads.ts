@@ -34,7 +34,7 @@ export const leadScoringSchema = z.object({
   scoreBreakdown: scoreBreakdownSchema,
   leadTemperature: leadTemperatureSchema,
   priority: prioritySchema,
-  recommendedAction: z.enum(["immediate_call", "demo_booking", "nurture_sequence", "disqualify"]),
+  recommendedAction: z.enum(["immediate_call", "demo_booking", "nurture_sequence", "disqualify", "self_service"]),
   reasoning: z.string(),
   buyingSignals: z.array(z.string()),
   riskFactors: z.array(z.string()),

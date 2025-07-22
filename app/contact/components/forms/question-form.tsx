@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { Loader2 } from "lucide-react"
 import type { FormData } from "@/lib/schemas/forms"
 
 interface QuestionOption {
@@ -39,25 +40,30 @@ export function QuestionForm({ question, onAnswer, onSkipToDemo, onSkipQuestion,
           {question.options.map((option) => (
             <button
               key={option.value}
-              className="w-full p-4 text-left border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-200"
+              className="w-full p-4 text-left border border-gray-200 rounded-lg cursor-pointer hover:border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-200"
               onClick={() => onAnswer(question.key, option.value)}
               disabled={isProcessing}
             >
-              <div className="font-medium text-gray-900">{option.label}</div>
+              <div className="font-medium text-gray-900 flex items-center justify-between">
+                {option.label}
+                {isProcessing && (
+                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                )}
+              </div>
             </button>
           ))}
         </div>
 
         <div className="pt-4 border-t border-gray-200 space-y-3">
           <button
-            className="w-full text-center text-sm text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-center text-sm text-gray-600 cursor-pointer hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={onSkipToDemo}
             disabled={isProcessing}
           >
             Skip questions and book demo
           </button>
           <button
-            className="w-full text-center text-xs text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-center text-xs text-gray-500 cursor-pointer hover:text-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={onSkipQuestion}
             disabled={isProcessing}
           >

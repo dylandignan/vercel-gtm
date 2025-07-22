@@ -38,8 +38,33 @@ export const getStatusColor = (status: string) => {
   return STATUS_COLOR_CONFIG[status as keyof typeof STATUS_COLOR_CONFIG] || STATUS_COLOR_CONFIG.new
 }
 
+export const TIMELINE_OPTIONS = [
+  { value: "asap", label: "ASAP (This month)" },
+  { value: "1-3months", label: "1-3 months" },
+  { value: "3-6months", label: "3-6 months" },
+  { value: "6+ months", label: "6+ months" },
+  { value: "exploring", label: "Just exploring options" },
+] as const
+
+export const BUDGET_RANGE_OPTIONS = [
+  { value: "10k+", label: "$10,000+ per month" },
+  { value: "5k-10k", label: "$5,000 - $10,000" },
+  { value: "1k-5k", label: "$1,000 - $5,000" },
+  { value: "500-1k", label: "$500 - $1,000" },
+  { value: "under-500", label: "Under $500" },
+  { value: "not-sure", label: "Not sure yet" },
+] as const
+
 export const getJobTitleLabel = (value: string) => {
   return JOB_TITLE_OPTIONS.find(option => option.value === value)?.label || value
+}
+
+export const getTimelineLabel = (value: string) => {
+  return TIMELINE_OPTIONS.find(option => option.value === value)?.label || value
+}
+
+export const getBudgetRangeLabel = (value: string) => {
+  return BUDGET_RANGE_OPTIONS.find(option => option.value === value)?.label || value
 }
 
 // Temperature configuration with icons and colors
