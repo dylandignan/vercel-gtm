@@ -19,9 +19,7 @@ interface LeadFiltersProps {
   disabled?: boolean
 }
 
-export function LeadFilters({
-  disabled = false,
-}: LeadFiltersProps) {
+export function LeadFilters({ disabled = false }: LeadFiltersProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -29,40 +27,43 @@ export function LeadFilters({
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams.toString())
-    
+
     if (term) {
       params.set("search", term)
     } else {
       params.delete("search")
     }
-    
+
     const queryString = params.toString()
     const url = queryString ? `${pathname}?${queryString}` : pathname
-    
+
     router.replace(url, { scroll: false })
   }, 300)
 
-  const filterConfigs = useMemo(() => [
-    { 
-      key: "temperature", 
-      label: "Temperature",
-      options: [
-        { value: "hot", label: "Hot" },
-        { value: "warm", label: "Warm" },
-        { value: "cold", label: "Cold" }
-      ]
-    },
-    { 
-      key: "status", 
-      label: "Status",
-      options: [
-        { value: "new", label: "New" },
-        { value: "contacted", label: "Contacted" },
-        { value: "qualified", label: "Qualified" },
-        { value: "demo_scheduled", label: "Demo Scheduled" }
-      ]
-    }
-  ], [])
+  const filterConfigs = useMemo(
+    () => [
+      {
+        key: "temperature",
+        label: "Temperature",
+        options: [
+          { value: "hot", label: "Hot" },
+          { value: "warm", label: "Warm" },
+          { value: "cold", label: "Cold" },
+        ],
+      },
+      {
+        key: "status",
+        label: "Status",
+        options: [
+          { value: "new", label: "New" },
+          { value: "contacted", label: "Contacted" },
+          { value: "qualified", label: "Qualified" },
+          { value: "demo_scheduled", label: "Demo Scheduled" },
+        ],
+      },
+    ],
+    []
+  )
 
   const updateFilters = useCallback(
     (key: string, values: string[]) => {
@@ -81,7 +82,7 @@ export function LeadFilters({
         router.replace(url, { scroll: false })
       })
     },
-    [router, pathname, searchParams],
+    [router, pathname, searchParams]
   )
 
   const getActiveFilters = useCallback(
@@ -89,7 +90,7 @@ export function LeadFilters({
       const param = searchParams.get(key)
       return param ? param.split(",") : []
     },
-    [searchParams],
+    [searchParams]
   )
 
   const handleFilterChange = useCallback(
@@ -99,39 +100,37 @@ export function LeadFilters({
 
       updateFilters(key, newFilters)
     },
-    [getActiveFilters, updateFilters],
+    [getActiveFilters, updateFilters]
   )
 
   const clearAllFilters = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString())
-    
-    
-    const filterKeys = ["search", ...filterConfigs.map(config => config.key)]
-    filterKeys.forEach(key => params.delete(key))
-    
+
+    const filterKeys = ["search", ...filterConfigs.map((config) => config.key)]
+    filterKeys.forEach((key) => params.delete(key))
+
     const queryString = params.toString()
     const url = queryString ? `${pathname}?${queryString}` : pathname
-    
+
     router.replace(url, { scroll: false })
   }, [router, pathname, searchParams, filterConfigs])
 
   const hasActiveFilters = useCallback(() => {
-    const filterKeys = ["search", ...filterConfigs.map(config => config.key)]
-    return filterKeys.some(key => searchParams.get(key))
+    const filterKeys = ["search", ...filterConfigs.map((config) => config.key)]
+    return filterKeys.some((key) => searchParams.get(key))
   }, [searchParams, filterConfigs])
 
-
   return (
-    <div className="border border-gray-200 rounded-lg p-6 mb-6">
+    <div className="mb-6 rounded-lg border border-gray-200 p-6">
       <div className="flex flex-wrap items-center gap-4">
-        <div className="flex-1 min-w-[300px]">
+        <div className="min-w-[300px] flex-1">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+            <Search className="absolute top-3 left-3 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search leads..."
               defaultValue={searchParams.get("search")?.toString()}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-10 border-gray-300 focus:border-black focus:ring-black"
+              className="border-gray-300 pl-10 focus:border-black focus:ring-black"
               disabled={disabled || isPending}
             />
           </div>
@@ -141,9 +140,9 @@ export function LeadFilters({
           return (
             <DropdownMenu key={config.key}>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="w-[140px] border-gray-300 justify-between" 
+                <Button
+                  variant="outline"
+                  className="w-[140px] justify-between border-gray-300"
                   disabled={disabled || isPending}
                 >
                   {activeFilters.length === 0 ? config.label : `${activeFilters.length} selected`}
@@ -176,7 +175,7 @@ export function LeadFilters({
             className="border-gray-300 text-gray-600 hover:bg-gray-50"
             disabled={disabled || isPending}
           >
-            <X className="h-4 w-4 mr-1" />
+            <X className="mr-1 h-4 w-4" />
             Clear
           </Button>
         )}

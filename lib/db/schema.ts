@@ -1,18 +1,24 @@
 import { sql } from "drizzle-orm"
 import { pgTable, uuid, timestamp, text, integer, jsonb, index, varchar } from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod"
-import { 
+import {
   leadTemperatureSchema,
   leadStatusSchema,
   prioritySchema,
   type LeadEnrichment,
-  type ScoreBreakdown
+  type ScoreBreakdown,
 } from "@/lib/schemas/leads"
 
-export const leads = pgTable("leads", {
+export const leads = pgTable(
+  "leads",
+  {
     id: uuid("id").primaryKey().defaultRandom(),
-    createdAt: timestamp("created_at").notNull().default(sql`now()`),
-    updatedAt: timestamp("updated_at").notNull().default(sql`now()`),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`now()`),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .default(sql`now()`),
 
     email: varchar("email", { length: 255 }).notNull().unique(),
     company: varchar("company", { length: 255 }).notNull(),
@@ -28,10 +34,10 @@ export const leads = pgTable("leads", {
     totalScore: integer("total_score").notNull().default(0),
     scoreBreakdown: jsonb("score_breakdown").$type<ScoreBreakdown>(),
     leadTemperature: text("lead_temperature", {
-      enum: leadTemperatureSchema.options
+      enum: leadTemperatureSchema.options,
     }),
     priority: text("priority", {
-      enum: prioritySchema.options
+      enum: prioritySchema.options,
     }),
     recommendedAction: varchar("recommended_action", { length: 500 }),
     reasoning: text("reasoning"),
@@ -40,11 +46,14 @@ export const leads = pgTable("leads", {
     nextBestActions: text("next_best_actions").array(),
 
     status: text("status", {
-      enum: leadStatusSchema.options
-    }).notNull().default("new"),
+      enum: leadStatusSchema.options,
+    })
+      .notNull()
+      .default("new"),
     assignedTo: varchar("assigned_to", { length: 100 }),
     notes: text("notes"),
-}, (table) => [
+  },
+  (table) => [
     index("idx_leads_created_at").on(table.createdAt),
     index("idx_leads_temperature").on(table.leadTemperature),
     index("idx_leads_score").on(table.totalScore),
@@ -58,7 +67,8 @@ export const leads = pgTable("leads", {
     index("idx_leads_enrichment_industry").using("gin", sql`(enrichment_data->'industry')`),
     index("idx_leads_enrichment_company_size").using("gin", sql`(enrichment_data->'companySize')`),
     index("idx_leads_search").using("gin", sql`to_tsvector('english', ${table.company} || ' ' || ${table.useCase})`),
-])
+  ]
+)
 
 export const leadSchema = createSelectSchema(leads)
 export const insertLeadSchema = createInsertSchema(leads)

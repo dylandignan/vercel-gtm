@@ -5,7 +5,14 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { LeadFilters } from "./components/lead-filters"
 import { LeadTable } from "./components/lead-table"
 import { ChatDrawer } from "@/app/admin/leads/components/chat-drawer"
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { Bot } from "lucide-react"
 import type { Lead } from "@/lib/db/schema"
 
@@ -26,7 +33,7 @@ export function LeadsPageClient({ initialLeads, totalCount, searchParams }: Lead
   const [isChatOpen, setIsChatOpen] = useState(false)
   const router = useRouter()
   const currentSearchParams = useSearchParams()
-  
+
   const currentPage = Number(searchParams.page) || 1
   const pageSize = Number(searchParams.limit) || 20
   const totalPages = Math.ceil(totalCount / pageSize)
@@ -47,18 +54,19 @@ export function LeadsPageClient({ initialLeads, totalCount, searchParams }: Lead
 
       <div className={isPending ? "pointer-events-none opacity-50" : ""}>
         <LeadTable leads={initialLeads} />
-        
+
         {totalPages > 1 && (
           <div className="mt-6 flex items-center justify-between">
             <div className="text-sm text-gray-500">
-              Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} leads
+              Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalCount)} of{" "}
+              {totalCount} leads
             </div>
             <Pagination>
               <PaginationContent>
                 {currentPage > 1 && (
                   <PaginationItem>
-                    <PaginationPrevious 
-                      href="#" 
+                    <PaginationPrevious
+                      href="#"
                       onClick={(e) => {
                         e.preventDefault()
                         handlePageChange(currentPage - 1)
@@ -66,7 +74,7 @@ export function LeadsPageClient({ initialLeads, totalCount, searchParams }: Lead
                     />
                   </PaginationItem>
                 )}
-                
+
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNumber: number
                   if (totalPages <= 5) {
@@ -78,7 +86,7 @@ export function LeadsPageClient({ initialLeads, totalCount, searchParams }: Lead
                   } else {
                     pageNumber = currentPage - 2 + i
                   }
-                  
+
                   return (
                     <PaginationItem key={pageNumber}>
                       <PaginationLink
@@ -94,11 +102,11 @@ export function LeadsPageClient({ initialLeads, totalCount, searchParams }: Lead
                     </PaginationItem>
                   )
                 })}
-                
+
                 {currentPage < totalPages && (
                   <PaginationItem>
-                    <PaginationNext 
-                      href="#" 
+                    <PaginationNext
+                      href="#"
                       onClick={(e) => {
                         e.preventDefault()
                         handlePageChange(currentPage + 1)

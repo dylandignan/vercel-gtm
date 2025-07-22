@@ -45,46 +45,42 @@ export class LeadQueries {
     }
   }
 
-static getAll = async (filters: Partial<LeadSearchParams> = {}): Promise<{ leads: Lead[], total: number }> => {
-  try {
-    const { page = 1, limit = 20, ...searchFilters } = filters
-    const offset = (page - 1) * limit
-    
-    
-    const conditions: SQL[] = [
-      searchFilters.temperature && searchFilters.temperature.length > 0 && inArray(leads.leadTemperature, searchFilters.temperature),
-      searchFilters.status && searchFilters.status.length > 0 && inArray(leads.status, searchFilters.status),
-      searchFilters.search && or(
-        ilike(leads.company, `%${searchFilters.search}%`),
-        ilike(leads.email,   `%${searchFilters.search}%`),
-        ilike(leads.useCase, `%${searchFilters.search}%`)
-      )
-    ].filter(Boolean) as SQL[];
+  static getAll = async (filters: Partial<LeadSearchParams> = {}): Promise<{ leads: Lead[]; total: number }> => {
+    try {
+      const { page = 1, limit = 20, ...searchFilters } = filters
+      const offset = (page - 1) * limit
 
-    const whereClause = conditions.length ? and(...conditions) : undefined;
-    
-    
-    const [{ total }] = await db
-      .select({ total: count() })
-      .from(leads)
-      .where(whereClause)
-    
-    
-    const result = await db
-      .select()
-      .from(leads)
-      .where(whereClause)
-      .orderBy(desc(leads.createdAt))
-      .limit(limit)
-      .offset(offset)
+      const conditions: SQL[] = [
+        searchFilters.temperature &&
+          searchFilters.temperature.length > 0 &&
+          inArray(leads.leadTemperature, searchFilters.temperature),
+        searchFilters.status && searchFilters.status.length > 0 && inArray(leads.status, searchFilters.status),
+        searchFilters.search &&
+          or(
+            ilike(leads.company, `%${searchFilters.search}%`),
+            ilike(leads.email, `%${searchFilters.search}%`),
+            ilike(leads.useCase, `%${searchFilters.search}%`)
+          ),
+      ].filter(Boolean) as SQL[]
 
-    return { leads: result, total };
-  } catch (error) {
-    console.error("Failed to get leads:", error);
-    return { leads: [], total: 0 };
+      const whereClause = conditions.length ? and(...conditions) : undefined
+
+      const [{ total }] = await db.select({ total: count() }).from(leads).where(whereClause)
+
+      const result = await db
+        .select()
+        .from(leads)
+        .where(whereClause)
+        .orderBy(desc(leads.createdAt))
+        .limit(limit)
+        .offset(offset)
+
+      return { leads: result, total }
+    } catch (error) {
+      console.error("Failed to get leads:", error)
+      return { leads: [], total: 0 }
+    }
   }
-};
-
 
   static async getById(id: string): Promise<Lead | null> {
     try {
@@ -135,32 +131,32 @@ static getAll = async (filters: Partial<LeadSearchParams> = {}): Promise<{ leads
   }
 
   static getStats = async () => {
-      try {
-        const allLeads = await db.select().from(leads)
+    try {
+      const allLeads = await db.select().from(leads)
 
-        const stats = {
-          total: allLeads.length,
-          hot: allLeads.filter((l) => l.leadTemperature === "hot").length,
-          warm: allLeads.filter((l) => l.leadTemperature === "warm").length,
-          cold: allLeads.filter((l) => l.leadTemperature === "cold").length,
-          new: allLeads.filter((l) => l.status === "new").length,
-          avgScore:
-            allLeads.length > 0
-              ? Math.round(allLeads.reduce((sum, lead) => sum + lead.totalScore, 0) / allLeads.length)
-              : 0,
-        }
+      const stats = {
+        total: allLeads.length,
+        hot: allLeads.filter((l) => l.leadTemperature === "hot").length,
+        warm: allLeads.filter((l) => l.leadTemperature === "warm").length,
+        cold: allLeads.filter((l) => l.leadTemperature === "cold").length,
+        new: allLeads.filter((l) => l.status === "new").length,
+        avgScore:
+          allLeads.length > 0
+            ? Math.round(allLeads.reduce((sum, lead) => sum + lead.totalScore, 0) / allLeads.length)
+            : 0,
+      }
 
-        return stats
-      } catch (error) {
-        console.error("Failed to get stats:", error)
-        return {
-          total: 0,
-          hot: 0,
-          warm: 0,
-          cold: 0,
-          new: 0,
-          avgScore: 0,
-        }
+      return stats
+    } catch (error) {
+      console.error("Failed to get stats:", error)
+      return {
+        total: 0,
+        hot: 0,
+        warm: 0,
+        cold: 0,
+        new: 0,
+        avgScore: 0,
       }
     }
+  }
 }

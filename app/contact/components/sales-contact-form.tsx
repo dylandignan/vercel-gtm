@@ -57,7 +57,9 @@ const SMART_QUESTIONS = [
 ]
 
 export function SalesContactForm() {
-  const [step, setStep] = useState<"initial" | "enriching" | "smart-questions" | "self-service" | "qualified">("initial")
+  const [step, setStep] = useState<"initial" | "enriching" | "smart-questions" | "self-service" | "qualified">(
+    "initial"
+  )
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -90,7 +92,7 @@ export function SalesContactForm() {
           if (!response.ok) return null
           const data = await response.json()
           if (data.error) return null
-          
+
           const parseResult = leadEnrichmentSchema.safeParse(data)
           return parseResult.success ? parseResult.data : null
         })
@@ -104,7 +106,7 @@ export function SalesContactForm() {
       }
 
       const scoringResult = await updateLeadScore(formData, enrichmentData)
-      
+
       if (scoringResult?.recommendedAction === "self_service") {
         setStep("self-service")
       } else {
@@ -129,7 +131,7 @@ export function SalesContactForm() {
           enrichmentData: enrichmentData || enrichment,
         }),
       })
-      
+
       if (response.ok) {
         const scoringResult = await response.json()
         return scoringResult
@@ -219,10 +221,7 @@ export function SalesContactForm() {
               )}
 
               {step === "self-service" && (
-                <SelfServiceForm
-                  companyName={formData.company}
-                  onContinueToDemo={handleSkipToDemo}
-                />
+                <SelfServiceForm companyName={formData.company} onContinueToDemo={handleSkipToDemo} />
               )}
 
               {step === "qualified" && <QualifiedForm enrichment={enrichment} />}

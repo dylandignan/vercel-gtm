@@ -1,6 +1,5 @@
 import { Flame, Thermometer, Snowflake } from "lucide-react"
 
-
 export const STATUS_OPTIONS = [
   { value: "new", label: "New" },
   { value: "contacted", label: "Contacted" },
@@ -9,7 +8,6 @@ export const STATUS_OPTIONS = [
   { value: "closed_won", label: "Closed Won" },
   { value: "closed_lost", label: "Closed Lost" },
 ] as const
-
 
 export const STATUS_COLOR_CONFIG = {
   new: "bg-blue-50 text-blue-700 border-blue-200",
@@ -29,9 +27,8 @@ export const JOB_TITLE_OPTIONS = [
   { value: "other", label: "Other" },
 ] as const
 
-
 export const getStatusLabel = (status: string) => {
-  return STATUS_OPTIONS.find(option => option.value === status)?.label || status
+  return STATUS_OPTIONS.find((option) => option.value === status)?.label || status
 }
 
 export const getStatusColor = (status: string) => {
@@ -56,17 +53,16 @@ export const BUDGET_RANGE_OPTIONS = [
 ] as const
 
 export const getJobTitleLabel = (value: string) => {
-  return JOB_TITLE_OPTIONS.find(option => option.value === value)?.label || value
+  return JOB_TITLE_OPTIONS.find((option) => option.value === value)?.label || value
 }
 
 export const getTimelineLabel = (value: string) => {
-  return TIMELINE_OPTIONS.find(option => option.value === value)?.label || value
+  return TIMELINE_OPTIONS.find((option) => option.value === value)?.label || value
 }
 
 export const getBudgetRangeLabel = (value: string) => {
-  return BUDGET_RANGE_OPTIONS.find(option => option.value === value)?.label || value
+  return BUDGET_RANGE_OPTIONS.find((option) => option.value === value)?.label || value
 }
-
 
 export const TEMPERATURE_CONFIG = {
   hot: {

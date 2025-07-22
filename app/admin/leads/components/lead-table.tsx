@@ -60,7 +60,9 @@ export function LeadTable({ leads }: LeadTableProps) {
                 <td className="px-6 py-4">
                   <div>
                     <div className="font-medium text-gray-900">{lead.email}</div>
-                    <div className="text-sm text-gray-600">{lead.jobTitle ? getJobTitleLabel(lead.jobTitle) : "No title"}</div>
+                    <div className="text-sm text-gray-600">
+                      {lead.jobTitle ? getJobTitleLabel(lead.jobTitle) : "No title"}
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -77,10 +79,10 @@ export function LeadTable({ leads }: LeadTableProps) {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{formatDate(lead.createdAt.toISOString())}</td>
                 <td className="px-6 py-4">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleViewLead(lead.id)} 
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleViewLead(lead.id)}
                     disabled={isPending}
                     className="border-gray-300"
                   >

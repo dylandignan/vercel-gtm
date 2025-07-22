@@ -55,7 +55,6 @@ export default async function LeadsPage({
   )
 }
 
-
 async function StatsSection() {
   try {
     const stats = await LeadQueries.getStats()
@@ -89,7 +88,6 @@ async function LeadsSection({ searchParams }: { searchParams: SearchParams }) {
     return <LeadsError />
   }
 }
-
 
 function StatsLoading() {
   return (
@@ -125,7 +123,6 @@ function LeadsLoading() {
     </div>
   )
 }
-
 
 function StatsError() {
   return (

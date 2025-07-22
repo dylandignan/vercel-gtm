@@ -10,12 +10,11 @@ export async function POST(request: Request) {
   try {
     const { messages } = await request.json()
 
-    
     const tools = {
       listTables: tool({
         description: "List all tables in the database with their schema information",
         parameters: z.object({
-          schema: z.string().optional().default("public").describe("Database schema to query")
+          schema: z.string().optional().default("public").describe("Database schema to query"),
         }),
         execute: async ({ schema }) => {
           const tables = await db.execute(sql`
@@ -27,49 +26,49 @@ export async function POST(request: Request) {
             WHERE table_schema = ${schema}
             ORDER BY table_name
           `)
-          
-          return { 
+
+          return {
             schema,
-            tables: tables 
+            tables: tables,
           }
-        }
+        },
       }),
 
       executeSQL: tool({
         description: "Execute a SELECT SQL query against the database (read-only for safety)",
         parameters: z.object({
-          query: z.string().describe("SQL query to execute (SELECT statements only)")
+          query: z.string().describe("SQL query to execute (SELECT statements only)"),
         }),
         execute: async ({ query }) => {
-          
           const trimmedQuery = query.trim().toLowerCase()
-          if (!trimmedQuery.startsWith('select')) {
+          if (!trimmedQuery.startsWith("select")) {
             throw new Error("Only SELECT queries are allowed for safety. Use SELECT statements to query data.")
           }
-          
+
           try {
             const result = await db.execute(sql.raw(query))
-            
+
             return {
               query,
               rows: result,
-              rowCount: result.length
+              rowCount: result.length,
             }
           } catch (error) {
             return {
               query,
               error: error instanceof Error ? error.message : "Unknown error",
-              suggestion: "Check your SQL syntax. Remember to use proper PostgreSQL syntax and quote table/column names if needed."
+              suggestion:
+                "Check your SQL syntax. Remember to use proper PostgreSQL syntax and quote table/column names if needed.",
             }
           }
-        }
+        },
       }),
 
       describeTable: tool({
         description: "Get detailed column information for a specific table",
         parameters: z.object({
           tableName: z.string().describe("Name of the table to describe"),
-          schema: z.string().optional().default("public").describe("Database schema")
+          schema: z.string().optional().default("public").describe("Database schema"),
         }),
         execute: async ({ tableName, schema }) => {
           const columns = await db.execute(sql`
@@ -83,21 +82,21 @@ export async function POST(request: Request) {
             WHERE table_schema = ${schema} AND table_name = ${tableName}
             ORDER BY ordinal_position
           `)
-          
+
           return {
             tableName,
             schema,
-            columns: columns
+            columns: columns,
           }
-        }
-      })
+        },
+      }),
     }
 
     const result = await streamText({
       model: openai("gpt-4o"),
       messages,
       tools,
-      maxSteps: 5, 
+      maxSteps: 5,
       system: `You are a Vercel sales assistant with direct access to our PostgreSQL database.
 
 Available Tools:
@@ -127,7 +126,6 @@ Remember: You can answer any question about the data by exploring tables and wri
   } catch (error: any) {
     console.error("Sales assistant API error:", error)
 
-    
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

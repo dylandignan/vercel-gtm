@@ -26,15 +26,14 @@ export function HeroSection({ step, currentQuestionIndex = 0, totalQuestions = 3
     <div className="space-y-12">
       <div className="space-y-6">
         <div className="space-y-4">
-          <h1 className="text-5xl font-medium tracking-tight text-black leading-[1.1]">
+          <h1 className="text-5xl leading-[1.1] font-medium tracking-tight text-black">
             Ship at the
             <br />
             <span className="text-gray-500">speed of thought</span>
           </h1>
-          <p className="text-xl text-gray-600 leading-relaxed max-w-lg">{getHeadline()}</p>
+          <p className="max-w-lg text-xl leading-relaxed text-gray-600">{getHeadline()}</p>
         </div>
 
-        
         {step === "smart-questions" && (
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
@@ -43,9 +42,9 @@ export function HeroSection({ step, currentQuestionIndex = 0, totalQuestions = 3
               </span>
               <span className="text-gray-500">{Math.round(progressPercentage)}% complete</span>
             </div>
-            <div className="w-full bg-gray-100 rounded-full h-1">
+            <div className="h-1 w-full rounded-full bg-gray-100">
               <div
-                className="bg-black h-1 rounded-full transition-all duration-300"
+                className="h-1 rounded-full bg-black transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>

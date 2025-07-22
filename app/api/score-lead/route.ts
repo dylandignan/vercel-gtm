@@ -10,7 +10,6 @@ export async function POST(request: Request) {
     const leadData = formDataSchema.parse(body.leadData)
     const enrichmentData = body.enrichmentData ? leadEnrichmentSchema.parse(body.enrichmentData) : undefined
 
-    
     const savedLead = await LeadQueries.upsert({
       email: leadData.email,
       company: leadData.company,
@@ -21,18 +20,17 @@ export async function POST(request: Request) {
       timeline: leadData.timeline,
       budgetRange: leadData.budgetRange,
       enrichmentData,
-      
+
       totalScore: 0,
       leadTemperature: "cold",
       priority: "medium",
     })
 
-    
     try {
       const { object } = await generateObject({
         model: openai("gpt-4o"),
         schema: leadScoringSchema,
-      prompt: `
+        prompt: `
         Analyze this lead and provide a comprehensive scoring assessment based on the actual data provided:
         
         LEAD DATA:
@@ -131,9 +129,8 @@ export async function POST(request: Request) {
         - Score engagement based on the depth and specificity of their response
         - Consider if this lead would be better served by self-signup for Vercel Pro
       `,
-    })
+      })
 
-      
       await LeadQueries.update(savedLead.id, {
         totalScore: object.totalScore,
         scoreBreakdown: object.scoreBreakdown,
@@ -149,12 +146,20 @@ export async function POST(request: Request) {
       return Response.json(object satisfies LeadScoring)
     } catch (aiError) {
       console.error("AI scoring failed, but lead was saved:", aiError)
-      
+
       return Response.json({
         totalScore: 0,
         leadTemperature: "cold",
         priority: "medium",
-        scoreBreakdown: { companySize: 0, jobTitle: 0, budget: 0, timeline: 0, useCase: 0, engagement: 0, buyingSignals: 0 },
+        scoreBreakdown: {
+          companySize: 0,
+          jobTitle: 0,
+          budget: 0,
+          timeline: 0,
+          useCase: 0,
+          engagement: 0,
+          buyingSignals: 0,
+        },
         recommendedAction: "nurture_sequence",
         reasoning: "AI scoring unavailable",
         buyingSignals: [],

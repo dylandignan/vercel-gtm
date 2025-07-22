@@ -22,7 +22,6 @@ export function SalesAssistantChat() {
     scrollToBottom()
   }, [messages])
 
-
   return (
     <div className="flex h-full flex-col">
       <Card className="flex flex-1 flex-col">
@@ -47,12 +46,13 @@ export function SalesAssistantChat() {
                     <span className="font-medium capitalize">{m.role}</span>
                   </div>
                   <div className="text-sm whitespace-pre-wrap">
-                    {m.content || (m.role === "assistant" && !m.content && (
-                      <div className="flex items-center space-x-2 text-gray-500">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Processing...</span>
-                      </div>
-                    ))}
+                    {m.content ||
+                      (m.role === "assistant" && !m.content && (
+                        <div className="flex items-center space-x-2 text-gray-500">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Processing...</span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>

@@ -395,7 +395,6 @@ async function seedLeads() {
 
     console.log(`🎉 Successfully seeded ${SEED_LEADS.length} leads!`)
 
-    
     const stats = await LeadQueries.getStats()
     console.log("\n📊 Database Summary:")
     console.log(`Total leads: ${stats.total}`)
@@ -408,7 +407,6 @@ async function seedLeads() {
     process.exit(1)
   }
 }
-
 
 seedLeads()
   .then(() => {

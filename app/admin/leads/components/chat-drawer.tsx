@@ -13,7 +13,6 @@ export function ChatDrawer({ isOpen, onClose }: ChatDrawerProps) {
 
   return (
     <div className="fixed right-6 bottom-0 z-50 flex h-[600px] w-96 flex-col rounded-t-lg border border-gray-200 bg-white shadow-2xl">
-      
       <div className="flex items-center justify-between rounded-t-lg border-b border-gray-200 bg-gray-50 p-4">
         <div className="flex items-center space-x-2">
           <Bot className="h-5 w-5 text-gray-600" />
@@ -24,7 +23,6 @@ export function ChatDrawer({ isOpen, onClose }: ChatDrawerProps) {
         </button>
       </div>
 
-      
       <div className="flex-1 overflow-hidden">
         <SalesAssistantChat />
       </div>

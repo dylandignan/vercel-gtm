@@ -32,7 +32,12 @@ export function QualifiedForm({ enrichment }: QualifiedFormProps) {
         <div className="space-y-3">
           {shouldGetProTrial ? (
             <>
-              <Link href="https://vercel.com/signup?plan=pro&next=/dashboard" target="_blank" rel="noopener noreferrer" className="w-full">
+              <Link
+                href="https://vercel.com/signup?plan=pro&next=/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+              >
                 <Button className="h-12 w-full bg-black text-base font-medium text-white hover:bg-gray-800">
                   {"Start free Pro trial"}
                   <ExternalLink className="ml-2 h-4 w-4" />
@@ -55,10 +60,7 @@ export function QualifiedForm({ enrichment }: QualifiedFormProps) {
               </div>
               <div className="text-center">
                 <Link href="https://vercel.com/contact/sales" target="_blank" rel="noopener noreferrer">
-                  <Button
-                    variant="outline"
-                    className="border-gray-300 bg-transparent text-sm hover:bg-gray-50"
-                  >
+                  <Button variant="outline" className="border-gray-300 bg-transparent text-sm hover:bg-gray-50">
                     Questions? Contact sales
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>

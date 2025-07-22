@@ -46,12 +46,12 @@ const STAT_CARDS = [
 
 export function LeadStats({ stats }: LeadStatsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
       {STAT_CARDS.map(({ key, label, icon: Icon, bgColor, iconColor }) => (
-        <div key={key} className="border border-gray-200 rounded-lg p-6">
+        <div key={key} className="rounded-lg border border-gray-200 p-6">
           <div className="flex items-center space-x-3">
-            <div className={`w-8 h-8 ${bgColor} rounded-lg flex items-center justify-center`}>
-              <Icon className={`w-4 h-4 ${iconColor}`} />
+            <div className={`h-8 w-8 ${bgColor} flex items-center justify-center rounded-lg`}>
+              <Icon className={`h-4 w-4 ${iconColor}`} />
             </div>
             <div>
               <div className="text-2xl font-medium text-black">{stats[key]}</div>

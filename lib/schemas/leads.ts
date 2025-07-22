@@ -1,14 +1,7 @@
 import { z } from "zod"
 
 export const leadTemperatureSchema = z.enum(["hot", "warm", "cold"])
-export const leadStatusSchema = z.enum([
-  "new",
-  "contacted", 
-  "qualified",
-  "demo_scheduled",
-  "closed_won",
-  "closed_lost"
-])
+export const leadStatusSchema = z.enum(["new", "contacted", "qualified", "demo_scheduled", "closed_won", "closed_lost"])
 export const prioritySchema = z.enum(["high", "medium", "low"])
 
 export const leadEnrichmentSchema = z.object({
@@ -60,7 +53,6 @@ export const leadSearchParamsSchema = z.object({
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(20),
 })
-
 
 export type LeadTemperature = z.infer<typeof leadTemperatureSchema>
 export type LeadStatus = z.infer<typeof leadStatusSchema>

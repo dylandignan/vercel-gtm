@@ -6,14 +6,12 @@ interface LeadDetailRouteProps {
   params: Promise<{ leadId: string }>
 }
 
-export default async function LeadDetailRoute({
-  params,
-}: LeadDetailRouteProps) {
+export default async function LeadDetailRoute({ params }: LeadDetailRouteProps) {
   const { leadId } = await params
-  
+
   try {
     const lead = await LeadQueries.getById(leadId)
-    
+
     if (!lead) {
       notFound()
     }
