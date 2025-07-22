@@ -18,8 +18,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "50k+",
       urgencyScore: 8,
       recommendedPlan: "enterprise",
-      keyPainPoints: ["Slow build times", "Global performance", "High traffic handling"],
-      nextBestQuestion: "What's your current monthly traffic volume for the developer portal?",
     },
     totalScore: 85,
     scoreBreakdown: {
@@ -55,8 +53,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "15k-50k",
       urgencyScore: 9,
       recommendedPlan: "enterprise",
-      keyPainPoints: ["Global performance", "Dynamic content", "Conversion optimization"],
-      nextBestQuestion: "What's your current conversion rate difference between regions?",
     },
     totalScore: 78,
     scoreBreakdown: {
@@ -92,8 +88,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "5k-15k",
       urgencyScore: 6,
       recommendedPlan: "pro",
-      keyPainPoints: ["Marketing team autonomy", "SEO optimization", "Traffic spikes"],
-      nextBestQuestion: "What CMS features are most important for your marketing team?",
     },
     totalScore: 72,
     scoreBreakdown: {
@@ -133,8 +127,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "15k-50k",
       urgencyScore: 7,
       recommendedPlan: "enterprise",
-      keyPainPoints: ["Documentation maintenance", "Developer experience", "API documentation"],
-      nextBestQuestion: "How many API endpoints do you need to document?",
     },
     totalScore: 75,
     scoreBreakdown: {
@@ -174,8 +166,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "15k-50k",
       urgencyScore: 6,
       recommendedPlan: "enterprise",
-      keyPainPoints: ["Global scaling", "Real-time updates", "Mobile performance"],
-      nextBestQuestion: "What's your expected peak concurrent users for the community hub?",
     },
     totalScore: 68,
     scoreBreakdown: {
@@ -215,8 +205,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "5k-15k",
       urgencyScore: 5,
       recommendedPlan: "pro",
-      keyPainPoints: ["Internal tooling", "Rapid prototyping", "Team productivity"],
-      nextBestQuestion: "How many team members would be using these internal tools?",
     },
     totalScore: 58,
     scoreBreakdown: {
@@ -256,8 +244,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "5k-15k",
       urgencyScore: 3,
       recommendedPlan: "pro",
-      keyPainPoints: ["Multi-language support", "Support tool integration", "Content management"],
-      nextBestQuestion: "Which support tools do you currently use that need integration?",
     },
     totalScore: 45,
     scoreBreakdown: {
@@ -293,8 +279,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "15k-50k",
       urgencyScore: 4,
       recommendedPlan: "enterprise",
-      keyPainPoints: ["Global performance", "High traffic handling", "Creator experience"],
-      nextBestQuestion: "What's your current traffic volume for the creator portal?",
     },
     totalScore: 52,
     scoreBreakdown: {
@@ -334,8 +318,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "1k-5k",
       urgencyScore: 2,
       recommendedPlan: "pro",
-      keyPainPoints: ["Design system documentation", "Component showcase", "Team collaboration"],
-      nextBestQuestion: "How many designers and developers would be contributing to the documentation?",
     },
     totalScore: 35,
     scoreBreakdown: {
@@ -375,8 +357,6 @@ const SEED_LEADS: NewLead[] = [
       likelyBudget: "50k+",
       urgencyScore: 7,
       recommendedPlan: "enterprise",
-      keyPainPoints: ["Microservices documentation", "Auto-generation", "Search functionality"],
-      nextBestQuestion: "How many microservices do you need to document?",
     },
     totalScore: 73,
     scoreBreakdown: {
