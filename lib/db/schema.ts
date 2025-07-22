@@ -45,46 +45,25 @@ export const leads = pgTable("leads", {
     assignedTo: varchar("assigned_to", { length: 100 }),
     notes: text("notes"),
 }, (table) => [
-    // Core indexes for common queries
     index("idx_leads_created_at").on(table.createdAt),
     index("idx_leads_temperature").on(table.leadTemperature),
     index("idx_leads_score").on(table.totalScore),
     index("idx_leads_status").on(table.status),
     index("idx_leads_company").on(table.company),
-    index("idx_leads_email").on(table.email), // For lookups
-    
-    // Composite indexes for common filter combinations
+    index("idx_leads_email").on(table.email),
     index("idx_leads_status_temp").on(table.status, table.leadTemperature),
     index("idx_leads_score_temp").on(table.totalScore, table.leadTemperature),
     index("idx_leads_created_status").on(table.createdAt, table.status),
-    
-    // Index for admin dashboard queries (status + score + created)
     index("idx_leads_dashboard").on(table.status, table.totalScore, table.createdAt),
-    
-    // JSONB indexes for enrichment and scoring queries
-    index("idx_leads_enrichment_industry").using(
-      "gin", 
-      sql`(enrichment_data->'industry')`
-    ),
-    index("idx_leads_enrichment_company_size").using(
-      "gin", 
-      sql`(enrichment_data->'companySize')`
-    ),
-    
-    // Full text search index for company and use case
-    index("idx_leads_search").using(
-      "gin",
-      sql`to_tsvector('english', ${table.company} || ' ' || ${table.useCase})`
-    ),
+    index("idx_leads_enrichment_industry").using("gin", sql`(enrichment_data->'industry')`),
+    index("idx_leads_enrichment_company_size").using("gin", sql`(enrichment_data->'companySize')`),
+    index("idx_leads_search").using("gin", sql`to_tsvector('english', ${table.company} || ' ' || ${table.useCase})`),
 ])
 
-// Database schemas
 export const leadSchema = createSelectSchema(leads)
 export const insertLeadSchema = createInsertSchema(leads)
 export const updateLeadSchema = createUpdateSchema(leads).omit({ id: true, createdAt: true, updatedAt: true })
 
-
-// Export unified types
 export type Lead = typeof leads.$inferSelect
 export type NewLead = typeof leads.$inferInsert
 export type LeadUpdate = Partial<NewLead>
