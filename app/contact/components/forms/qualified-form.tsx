@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, ExternalLink, Clock } from "lucide-react"
 import type { LeadEnrichment } from "@/lib/schemas/leads"
@@ -31,13 +32,12 @@ export function QualifiedForm({ enrichment }: QualifiedFormProps) {
         <div className="space-y-3">
           {shouldGetProTrial ? (
             <>
-              <Button
-                className="h-12 w-full bg-black text-base font-medium text-white hover:bg-gray-800"
-                onClick={() => window.open("https://vercel.com/signup?plan=pro&next=/dashboard", "_blank")}
-              >
-                {"Start free Pro trial"}
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href="https://vercel.com/signup?plan=pro&next=/dashboard" target="_blank" rel="noopener noreferrer" className="w-full">
+                <Button className="h-12 w-full bg-black text-base font-medium text-white hover:bg-gray-800">
+                  {"Start free Pro trial"}
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
               <div className="text-center text-sm text-gray-600">14-day free trial • No credit card required</div>
             </>
           ) : (
@@ -54,14 +54,15 @@ export function QualifiedForm({ enrichment }: QualifiedFormProps) {
                 </p>
               </div>
               <div className="text-center">
-                <Button
-                  variant="outline"
-                  className="border-gray-300 bg-transparent text-sm hover:bg-gray-50"
-                  onClick={() => window.open("https://vercel.com/contact/sales", "_blank")}
-                >
-                  Questions? Contact sales
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
+                <Link href="https://vercel.com/contact/sales" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    variant="outline"
+                    className="border-gray-300 bg-transparent text-sm hover:bg-gray-50"
+                  >
+                    Questions? Contact sales
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
             </>
           )}
